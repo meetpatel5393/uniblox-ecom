@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.schemas.admin import AdminReportResponse
 from app.schemas.coupon import (
+    CouponListResponse,
     CouponResponse,
     DeleteCouponResponse,
     GenerateCouponsRequest,
@@ -58,19 +59,22 @@ def get_milestone_status(interval_n: int | None = None, db: Session = Depends(ge
 
 @router.get(
     "/coupons",
-    response_model=list[CouponResponse],
-    summary="[Admin] List all coupons",
+    response_model=CouponListResponse,
+    summary="[Admin] List coupons (paginated)",
     description=(
-        "Returns every coupon in the system, including its remaining uses. "
-        "`uses_remaining = max_uses - redemption_count`. "
+        "Returns coupons paginated. `uses_remaining = max_uses - redemption_count`. "
         "A coupon with `uses_remaining = 0` cannot be applied at checkout."
     ),
     responses={
-        200: {"description": "Array of all coupons (may be empty)."},
+        200: {"description": "Paginated coupon list."},
     },
 )
-def list_coupons(db: Session = Depends(get_db)):
-    return coupon_service.list_coupons(db)
+def list_coupons(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(10, ge=1, le=100, description="Items per page"),
+    db: Session = Depends(get_db),
+):
+    return coupon_service.list_coupons_paginated(db, page, page_size)
 
 
 @router.delete(

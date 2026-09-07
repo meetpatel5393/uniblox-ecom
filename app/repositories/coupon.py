@@ -105,6 +105,13 @@ def get_all(db: Session) -> list[Coupon]:
     )
 
 
+def get_paginated(db: Session, page: int, page_size: int) -> tuple[list[Coupon], int]:
+    q = db.query(Coupon).options(selectinload(Coupon.redemptions)).order_by(Coupon.milestone_n)
+    total = q.count()
+    items = q.offset((page - 1) * page_size).limit(page_size).all()
+    return items, total
+
+
 def get_by_code_or_public_id(db: Session, code_or_id: str) -> Coupon | None:
     try:
         val = uuid.UUID(code_or_id)
