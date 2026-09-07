@@ -31,3 +31,6 @@ Thumbs.db
 
 # Plan (internal only)
 PLAN.md
+
+# Deprecated Railway config
+railway.json
