@@ -2239,7 +2239,7 @@ function gotoPage(name) {
     document.querySelector(`[data-page="${name}"]`)?.classList.add('active');
     currentPage = name;
 
-    if (name === 'products' && !S.products.length) await loadProducts();
+    if (name === 'products') await loadProducts();
     if (name === 'cart') { if (S.cart) await loadCart(); else renderCartPanel(); }
     if (name === 'checkout') {
       $('order-result').innerHTML = '';
@@ -2478,12 +2478,16 @@ async function addToCart(productId, productName, btnId) {
   }
   if (S.cart.checked_out) { toast('Current cart is already checked out — click "New Cart"', 'err'); return; }
   const qty = parseInt($(`qty-${productId}`)?.value) || 1;
+  const product = S.products.find(p => p.id === productId);
+  if (product && qty > product.stock_qty) {
+    toast(`Only ${product.stock_qty} in stock`, 'err'); return;
+  }
   await withBtn(btnId, 'Adding…', async () => {
     const { ok, data } = await api('POST', `/carts/${S.cart.id}/items`, { product_id: productId, qty });
     if (ok) {
       S.cart = data; renderCustomerStatus(); renderCartBadge();
       toast(`Added ${qty}× ${productName} to cart`);
-      renderProducts();
+      await loadProducts();
     } else {
       toast(data.detail || 'Failed to update cart', 'err');
     }
@@ -2544,7 +2548,7 @@ function renderCartPanel() {
         <div class="font-mono text-xs text-light">${esc(item.product_id.slice(0, 8))}…</div>
       </td>
       <td style="width:100px;text-align:center">
-        <input type="number" min="1" value="${item.qty}"
+        <input type="number" min="1" max="${(S.products.find(p=>p.id===item.product_id)||{}).stock_qty||9999}" value="${item.qty}"
           onchange="updateQty('${item.product_id}',this.value,this)"
           class="inp tabular" style="width:64px;padding:6px 4px;text-align:center" />
       </td>
@@ -2592,6 +2596,12 @@ function renderCartPanel() {
 async function updateQty(productId, qty, inputEl) {
   qty = parseInt(qty);
   if (!qty || qty < 1) { await loadCart(); return; }
+  const product = S.products.find(p => p.id === productId);
+  if (product && qty > product.stock_qty) {
+    toast(`Only ${product.stock_qty} in stock`, 'err');
+    inputEl.value = product.stock_qty;
+    return;
+  }
   inputEl.disabled = true;
   const { ok, data } = await api('PATCH', `/carts/${S.cart.id}/items/${productId}`, { qty });
   inputEl.disabled = false;
@@ -3005,7 +3015,7 @@ async function autoGenerateCoupons() {
       el.innerHTML = `<div class="msg msg-ok mt-2" style="padding:10px 14px;font-size:12.5px">${esc(data.message)}</div>`;
       toast(`Generated ${data.generated} milestone coupon(s)!`);
     }
-    await listCoupons();
+    await listCoupons(1);
     await loadMilestoneStatus();
   });
 }
@@ -3172,15 +3182,21 @@ async function generateCoupons() {
         </div>
       </div>`;
     toast(`Milestone voucher issued: ${c.code}`);
-    await listCoupons();
+    await listCoupons(1);
     await loadMilestoneStatus();
   });
 }
 
-async function listCoupons() {
+let allCoupons = [];
+let couponPage = 1;
+const COUPONS_PAGE_SIZE = 10;
+
+async function listCoupons(page) {
+  if (page !== undefined) couponPage = page;
   const { ok, data } = await api('GET', '/admin/coupons');
   const el = $('coupons-list');
   if (!ok) { el.innerHTML = `<div class="msg msg-err" style="margin:16px">${esc(data.detail)}</div>`; return; }
+  allCoupons = data;
 
   // Update metrics strip
   const countEl = $('stat-coupon-count');
@@ -3191,17 +3207,39 @@ async function listCoupons() {
     poolEl.textContent = pool;
   }
 
+  renderCouponsPage();
+}
+
+function renderCouponsPage() {
+  const el = $('coupons-list');
+  const data = allCoupons;
+
   if (!data.length) {
     el.innerHTML = `<div class="empty">
       <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div>
       <div>No milestone coupons created yet. Generate one in the studio above.</div>
     </div>`; return;
   }
+
+  const totalPages = Math.ceil(data.length / COUPONS_PAGE_SIZE);
+  couponPage = Math.min(Math.max(couponPage, 1), totalPages);
+  const pageData = data.slice((couponPage - 1) * COUPONS_PAGE_SIZE, couponPage * COUPONS_PAGE_SIZE);
+
+  const paginationHtml = totalPages > 1 ? `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid var(--border-subtle);background:#fafbfc">
+      <span class="text-xs text-light">Showing ${(couponPage-1)*COUPONS_PAGE_SIZE+1}–${Math.min(couponPage*COUPONS_PAGE_SIZE,data.length)} of ${data.length} coupons</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn btn-secondary btn-sm" onclick="couponPage--;renderCouponsPage()" ${couponPage<=1?'disabled':''}>← Prev</button>
+        <span class="text-xs tabular" style="min-width:60px;text-align:center">Page ${couponPage} / ${totalPages}</span>
+        <button class="btn btn-secondary btn-sm" onclick="couponPage++;renderCouponsPage()" ${couponPage>=totalPages?'disabled':''}>Next →</button>
+      </div>
+    </div>` : '';
+
   el.innerHTML = `<div class="scroll-panel"><table style="width:100%">
     <thead><tr>
-      <th>Code Reference</th><th>Discount Rule</th><th>Minimum Order</th><th>Milestone</th><th style="text-align:center">Uses Left</th><th style="text-align:center">State</th><th style="text-align:right">Action</th>
+      <th>Code Reference</th><th>Discount Rule</th><th>Minimum Order</th><th>Milestone</th><th style="text-align:center">Uses Left / Max</th><th style="text-align:center">State</th><th style="text-align:right">Action</th>
     </tr></thead>
-    <tbody>${data.map(c => {
+    <tbody>${pageData.map(c => {
       const isFixed = c.discount_type === 'fixed' && c.discount_amount_cents != null;
       const discountBadge = isFixed
         ? `<span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:700">$${(c.discount_amount_cents/100).toFixed(2)} Fixed OFF</span>`
@@ -3231,14 +3269,14 @@ async function listCoupons() {
       <td>${discountBadge}</td>
       <td>${minCartBadge}</td>
       <td style="text-align:center"><span class="badge badge-brand">#${c.milestone_n}</span></td>
-      <td style="text-align:center;font-weight:700" class="tabular font-mono ${c.uses_remaining > 0 ? 'text-success' : 'text-danger'}">${c.uses_remaining}</td>
+      <td style="text-align:center;font-weight:700" class="tabular font-mono ${c.uses_remaining > 0 ? 'text-success' : 'text-danger'}">${c.uses_remaining} <span style="font-weight:400;color:var(--text-light)">/ ${c.max_uses}</span></td>
       <td style="text-align:center">${c.uses_remaining > 0
         ? '<span class="badge badge-ok">Active Pool</span>'
         : '<span class="badge badge-err">Exhausted</span>'}</td>
       <td style="text-align:right">${actionCell}</td>
     </tr>`;
     }).join('')}</tbody>
-  </table></div>`;
+  </table>${paginationHtml}</div>`;
 }
 
 let couponCodeToDelete = null;
@@ -3287,7 +3325,7 @@ async function confirmDeleteCoupon() {
     }
     closeDeleteCouponModal();
     toast(`Coupon ${code} permanently deleted`, 'ok');
-    await listCoupons();
+    await listCoupons(1);
     if (typeof loadMilestoneStatus === 'function') {
       await loadMilestoneStatus();
     }
