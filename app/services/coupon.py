@@ -167,6 +167,19 @@ def list_coupons(db: Session) -> list[CouponResponse]:
     return [_to_response(c) for c in coupon_repo.get_all(db)]
 
 
+def list_coupons_paginated(db: Session, page: int, page_size: int):
+    from app.schemas.coupon import CouponListResponse
+    import math
+    items, total = coupon_repo.get_paginated(db, page, page_size)
+    return CouponListResponse(
+        items=[_to_response(c) for c in items],
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=math.ceil(total / page_size) if total else 1,
+    )
+
+
 def delete_coupon(db: Session, code_or_id: str) -> DeleteCouponResponse:
     """
     Deletes a created coupon ONLY if it has not been used.

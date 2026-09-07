@@ -2437,6 +2437,9 @@ function renderProducts() {
   }
   grid.innerHTML = S.products.map(p => {
     const out = p.stock_qty === 0;
+    const inCart = (S.cart?.items || []).find(i => i.product_id === p.id)?.qty || 0;
+    const available = p.stock_qty - inCart;
+    const cartFull = available <= 0 && !out;
     const low = p.stock_qty > 0 && p.stock_qty <= 3;
     const category = getCategoryTag(p.name);
     const svgIcon = getProductSvg(p.name);
@@ -2456,12 +2459,12 @@ function renderProducts() {
         </span>
       </div>
       <div class="qty-row">
-        <input type="number" min="1" max="${p.stock_qty || 1}" value="1" id="qty-${p.id}"
-          class="inp qty-inp" ${out ? 'disabled' : ''} />
-        <button id="add-${p.id}" class="btn btn-primary btn-sm flex-1" ${out ? 'disabled' : ''}
+        <input type="number" min="1" max="${available > 0 ? available : 1}" value="1" id="qty-${p.id}"
+          class="inp qty-inp" ${(out || cartFull) ? 'disabled' : ''} />
+        <button id="add-${p.id}" class="btn btn-primary btn-sm flex-1" ${(out || cartFull) ? 'disabled' : ''}
           onclick="addToCart('${p.id}','${esc(p.name)}','add-${p.id}')">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          ${out ? 'Unavailable' : 'Add to Cart'}
+          ${out ? 'Unavailable' : cartFull ? 'In Cart (Max)' : 'Add to Cart'}
         </button>
       </div>
     </div>`;
@@ -2479,8 +2482,14 @@ async function addToCart(productId, productName, btnId) {
   if (S.cart.checked_out) { toast('Current cart is already checked out — click "New Cart"', 'err'); return; }
   const qty = parseInt($(`qty-${productId}`)?.value) || 1;
   const product = S.products.find(p => p.id === productId);
-  if (product && qty > product.stock_qty) {
-    toast(`Only ${product.stock_qty} in stock`, 'err'); return;
+  if (product) {
+    const inCart = (S.cart?.items || []).find(i => i.product_id === productId)?.qty || 0;
+    if (inCart + qty > product.stock_qty) {
+      const available = product.stock_qty - inCart;
+      if (available <= 0) toast(`All ${product.stock_qty} in stock already in your cart`, 'err');
+      else toast(`Only ${available} more available (${inCart} already in cart)`, 'err');
+      return;
+    }
   }
   await withBtn(btnId, 'Adding…', async () => {
     const { ok, data } = await api('POST', `/carts/${S.cart.id}/items`, { product_id: productId, qty });
@@ -3187,51 +3196,42 @@ async function generateCoupons() {
   });
 }
 
-let allCoupons = [];
 let couponPage = 1;
 const COUPONS_PAGE_SIZE = 10;
 
 async function listCoupons(page) {
   if (page !== undefined) couponPage = page;
-  const { ok, data } = await api('GET', '/admin/coupons');
   const el = $('coupons-list');
+  const { ok, data } = await api('GET', `/admin/coupons?page=${couponPage}&page_size=${COUPONS_PAGE_SIZE}`);
   if (!ok) { el.innerHTML = `<div class="msg msg-err" style="margin:16px">${esc(data.detail)}</div>`; return; }
-  allCoupons = data;
 
   // Update metrics strip
   const countEl = $('stat-coupon-count');
   const poolEl = $('stat-coupon-pool');
-  if (countEl) countEl.textContent = data.length;
+  if (countEl) countEl.textContent = data.total;
   if (poolEl) {
-    const pool = data.reduce((acc, c) => acc + (c.uses_remaining || 0), 0);
+    const pool = data.items.reduce((acc, c) => acc + (c.uses_remaining || 0), 0);
     poolEl.textContent = pool;
   }
 
-  renderCouponsPage();
-}
-
-function renderCouponsPage() {
-  const el = $('coupons-list');
-  const data = allCoupons;
-
-  if (!data.length) {
+  if (!data.total) {
     el.innerHTML = `<div class="empty">
       <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div>
       <div>No milestone coupons created yet. Generate one in the studio above.</div>
     </div>`; return;
   }
 
-  const totalPages = Math.ceil(data.length / COUPONS_PAGE_SIZE);
-  couponPage = Math.min(Math.max(couponPage, 1), totalPages);
-  const pageData = data.slice((couponPage - 1) * COUPONS_PAGE_SIZE, couponPage * COUPONS_PAGE_SIZE);
+  const { items, total, total_pages } = data;
+  const start = (couponPage - 1) * COUPONS_PAGE_SIZE + 1;
+  const end = Math.min(couponPage * COUPONS_PAGE_SIZE, total);
 
-  const paginationHtml = totalPages > 1 ? `
+  const paginationHtml = total_pages > 1 ? `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid var(--border-subtle);background:#fafbfc">
-      <span class="text-xs text-light">Showing ${(couponPage-1)*COUPONS_PAGE_SIZE+1}–${Math.min(couponPage*COUPONS_PAGE_SIZE,data.length)} of ${data.length} coupons</span>
+      <span class="text-xs text-light">Showing ${start}–${end} of ${total} coupons</span>
       <div style="display:flex;gap:6px;align-items:center">
-        <button class="btn btn-secondary btn-sm" onclick="couponPage--;renderCouponsPage()" ${couponPage<=1?'disabled':''}>← Prev</button>
-        <span class="text-xs tabular" style="min-width:60px;text-align:center">Page ${couponPage} / ${totalPages}</span>
-        <button class="btn btn-secondary btn-sm" onclick="couponPage++;renderCouponsPage()" ${couponPage>=totalPages?'disabled':''}>Next →</button>
+        <button class="btn btn-secondary btn-sm" onclick="listCoupons(${couponPage-1})" ${couponPage<=1?'disabled':''}>← Prev</button>
+        <span class="text-xs tabular" style="min-width:60px;text-align:center">Page ${couponPage} / ${total_pages}</span>
+        <button class="btn btn-secondary btn-sm" onclick="listCoupons(${couponPage+1})" ${couponPage>=total_pages?'disabled':''}>Next →</button>
       </div>
     </div>` : '';
 
@@ -3239,7 +3239,7 @@ function renderCouponsPage() {
     <thead><tr>
       <th>Code Reference</th><th>Discount Rule</th><th>Minimum Order</th><th>Milestone</th><th style="text-align:center">Uses Left / Max</th><th style="text-align:center">State</th><th style="text-align:right">Action</th>
     </tr></thead>
-    <tbody>${pageData.map(c => {
+    <tbody>${items.map(c => {
       const isFixed = c.discount_type === 'fixed' && c.discount_amount_cents != null;
       const discountBadge = isFixed
         ? `<span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:700">$${(c.discount_amount_cents/100).toFixed(2)} Fixed OFF</span>`
@@ -3280,6 +3280,7 @@ function renderCouponsPage() {
 }
 
 let couponCodeToDelete = null;
+function renderCouponsPage() {} // no-op: replaced by server-side pagination in listCoupons()
 
 function openDeleteCouponModal(code) {
   couponCodeToDelete = code;

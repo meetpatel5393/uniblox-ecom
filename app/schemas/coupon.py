@@ -81,6 +81,14 @@ class GenerateCouponsResponse(BaseModel):
     milestone_status: Optional[MilestoneStatusResponse] = None
 
 
+class CouponListResponse(BaseModel):
+    items: list[CouponResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
 class DeleteCouponResponse(BaseModel):
     deleted: bool
     code: str
