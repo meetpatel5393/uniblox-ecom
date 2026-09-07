@@ -2,10 +2,3423 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>uniblox-ecom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uniblox Commerce Engine — Order & Checkout Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      --bg-app:        #f8fafc;
+      --bg-surface:    #ffffff;
+      --bg-subtle:     #f1f5f9;
+      --bg-muted:      #e2e8f0;
+
+      --border-light:  #f1f5f9;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+
+      --text-main:     #0f172a;
+      --text-muted:    #475569;
+      --text-light:    #64748b;
+      --text-soft:     #94a3b8;
+
+      --brand:         #2563eb;
+      --brand-hover:   #1d4ed8;
+      --brand-dark:    #1e40af;
+      --brand-subtle:  #eff6ff;
+      --brand-border:  #bfdbfe;
+
+      --accent-slate:  #0f172a;
+      --accent-dark:   #090d16;
+
+      --success:       #059669;
+      --success-dark:  #047857;
+      --success-bg:    #ecfdf5;
+      --success-border:#a7f3d0;
+
+      --warn:          #d97706;
+      --warn-dark:     #b45309;
+      --warn-bg:       #fffbeb;
+      --warn-border:   #fde68a;
+
+      --danger:        #e11d48;
+      --danger-dark:   #be123c;
+      --danger-bg:     #fff1f2;
+      --danger-border: #fecdd3;
+
+      --purple:        #7c3aed;
+      --purple-bg:     #f5f3ff;
+      --purple-border: #ddd6fe;
+
+      --radius-sm:     6px;
+      --radius:        10px;
+      --radius-lg:     14px;
+      --radius-xl:     18px;
+
+      --shadow-xs:     0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-sm:     0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md:     0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --shadow-lg:     0 12px 28px -4px rgba(15, 23, 42, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
+
+      --sidebar-w:     264px;
+      --hdr-h:         60px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-app);
+      color: var(--text-main);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Typography helpers ────────────────────────────────────────── */
+    .tabular { font-variant-numeric: tabular-nums; }
+    .font-mono { font-family: var(--font-mono); }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .text-xs { font-size: 11px; }
+    .text-sm { font-size: 12.5px; }
+    .text-muted { color: var(--text-muted); }
+    .text-light { color: var(--text-light); }
+    .text-brand { color: var(--brand); }
+    .text-success { color: var(--success); }
+    .text-danger { color: var(--danger); }
+    .text-warn { color: var(--warn); }
+
+    /* ── Top Bar ──────────────────────────────────────────────────── */
+    .topbar {
+      height: var(--hdr-h);
+      background: var(--accent-slate);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 20px 0 18px;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 15.5px;
+      letter-spacing: -0.4px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-env {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.12);
+      color: #cbd5e1;
+    }
+    .topbar-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255,255,255,0.12);
+    }
+    .topbar-subtitle {
+      font-size: 12px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #4ade80;
+      background: rgba(34,197,94,0.1);
+      padding: 3px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(34,197,94,0.25);
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px #4ade80;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .topbar-links {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topbar-link {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all .15s ease;
+    }
+    .topbar-link:hover {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* ── App Shell ───────────────────────────────────────────────── */
+    .shell {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── Modern Sidebar ──────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    /* Customer profile switch card */
+    /* Customer Account Switcher */
+    .customer-box {
+      padding: 14px 12px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: #fafbfc;
+      position: relative;
+    }
+    .customer-box-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .customer-switcher-btn {
+      width: 100%;
+      padding: 8px 10px;
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      box-shadow: var(--shadow-xs);
+      transition: all .15s ease;
+      position: relative;
+    }
+    .customer-switcher-btn:hover {
+      border-color: var(--brand-border);
+      box-shadow: var(--shadow-sm);
+      background: #fdfefe;
+    }
+    .customer-switcher-btn:focus-visible {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+    .switcher-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .switcher-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .switcher-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .switcher-email {
+      font-size: 11px;
+      color: var(--text-light);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .switcher-chevron {
+      color: var(--text-light);
+      transition: transform .2s ease;
+      display: flex;
+    }
+    .customer-switcher-btn.open .switcher-chevron {
+      transform: rotate(180deg);
+      color: var(--brand);
+    }
+
+    /* Floating Dropdown Menu */
+    .customer-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 12px;
+      right: 12px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      z-index: 80;
+      overflow: hidden;
+      animation: menuFadeIn .15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes menuFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .customer-menu-hdr {
+      padding: 8px 12px;
+      background: #fafbfc;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-soft);
+    }
+    .customer-menu-list {
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .customer-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      transition: background .12s;
+    }
+    .customer-menu-item:hover {
+      background: #f1f5f9;
+    }
+    .customer-menu-item.active {
+      background: #eff6ff;
+    }
+    .customer-menu-item.active .switcher-name {
+      color: var(--brand);
+    }
+    .customer-menu-check {
+      margin-left: auto;
+      color: var(--brand);
+      display: none;
+    }
+    .customer-menu-item.active .customer-menu-check {
+      display: flex;
+    }
+    .customer-menu-footer {
+      padding: 6px 8px;
+      border-top: 1px solid var(--border-light);
+      background: #fafbfc;
+    }
+    .customer-menu-add-btn {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--brand);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .12s;
+    }
+    .customer-menu-add-btn:hover {
+      background: #eff6ff;
+      color: var(--brand-dark);
+    }
+    .cart-mini {
+      margin-top: 8px;
+      padding: 7px 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Nav group */
+    .nav-section {
+      padding: 14px 10px 6px;
+    }
+    .nav-section-lbl {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-soft);
+      padding: 0 8px 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      position: relative;
+      transition: all .12s ease;
+    }
+    .nav-item:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+    .nav-item.active {
+      background: var(--brand-subtle);
+      color: var(--brand);
+      font-weight: 600;
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 6px;
+      bottom: 6px;
+      width: 3.5px;
+      background: var(--brand);
+      border-radius: 4px;
+    }
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--bg-muted);
+      color: var(--text-light);
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 1px 7px;
+      font-family: var(--font-mono);
+    }
+    .nav-item.active .nav-badge {
+      background: #bfdbfe;
+      color: var(--brand-dark);
+    }
+
+    .nav-divider {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 10px 14px;
+    }
+
+    /* Admin styling in sidebar */
+    .nav-admin .nav-item:hover {
+      background: #fffbeb;
+      color: #92400e;
+    }
+    .nav-admin .nav-item.active {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .nav-admin .nav-item.active::before {
+      background: #d97706;
+    }
+    .nav-admin .nav-section-lbl {
+      color: #b45309;
+    }
+
+    .admin-warn {
+      margin: auto 12px 14px;
+      padding: 10px 12px;
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      color: #854d0e;
+      line-height: 1.4;
+      display: flex;
+      gap: 8px;
+    }
+    .admin-warn code {
+      background: rgba(0,0,0,0.06);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+
+    /* ── Main Content Area ────────────────────────────────────────── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 26px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Page header */
+    .page-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 4px;
+    }
+    .page-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.4px;
+    }
+    .page-sub {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 3px;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .endpoint-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      color: #334155;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-surface);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
+    }
+    .card-sub {
+      font-size: 11.5px;
+      color: var(--text-light);
+      font-family: var(--font-mono);
+      margin-bottom: 16px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .stat {
+      background: var(--bg-surface);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-xs);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #cbd5e1;
+    }
+    .stat-val {
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-mono);
+    }
+    .stat-lbl {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .stat.green::before { background: var(--success); }
+    .stat.green .stat-val { color: var(--success-dark); }
+    .stat.red::before { background: var(--danger); }
+    .stat.red .stat-val { color: var(--danger-dark); }
+    .stat.brand::before { background: var(--brand); }
+    .stat.brand .stat-val { color: var(--brand); }
+
+    /* Form fields */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .field .hint {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+    .inp {
+      padding: 8px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-main);
+      background: #fff;
+      width: 100%;
+      box-shadow: var(--shadow-xs);
+      transition: all .15s ease;
+    }
+    .inp:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
+    }
+    .inp:disabled {
+      background: var(--bg-subtle);
+      color: var(--text-soft);
+      cursor: not-allowed;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-xs);
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand-hover);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--brand-hover);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: var(--text-muted);
+      border-color: var(--border-strong);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border-color: #94a3b8;
+    }
+    .btn-danger {
+      background: #fff;
+      color: var(--danger);
+      border-color: var(--danger-border);
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .btn-warn {
+      background: #d97706;
+      color: #fff;
+      border-color: #b45309;
+    }
+    .btn-warn:hover:not(:disabled) {
+      background: #b45309;
+    }
+
+    /* Tables */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-light);
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+      background: #fafbfd;
+    }
+    th:first-child { border-top-left-radius: var(--radius-sm); }
+    th:last-child { border-top-right-radius: var(--radius-sm); }
+    td {
+      padding: 12px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    tr:hover td {
+      background: #fafbfc;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .tbl-mono {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 12px;
+    }
+
+    /* Product Grid & Realistic Cards */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .product-card {
+      background: #fff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: all .2s ease;
+      position: relative;
+    }
+    .product-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+    .product-card.out-of-stock {
+      background: #fafbfc;
+      opacity: 0.75;
+    }
+    .product-thumb {
+      height: 120px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    .product-category-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.92);
+      color: var(--text-muted);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .product-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+      line-height: 1.35;
+      margin-bottom: 2px;
+    }
+    .product-price {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    /* Stock indicator pills */
+    .stock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      width: fit-content;
+    }
+    .stock-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .stock-ok {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+    .stock-ok .stock-dot { background: var(--success); }
+
+    .stock-low {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid var(--warn-border);
+    }
+    .stock-low .stock-dot {
+      background: var(--warn);
+      animation: pulse 1.5s infinite;
+    }
+
+    .stock-out {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+    .stock-out .stock-dot { background: var(--danger); }
+
+    .qty-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+    .qty-inp {
+      width: 64px;
+      text-align: center;
+      padding: 7px 4px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    /* Messages & Alert boxes */
+    .msg {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .msg-ok {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success-dark);
+    }
+    .msg-err {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-dark);
+    }
+    .msg-info {
+      background: var(--brand-subtle);
+      border: 1px solid var(--brand-border);
+      color: var(--brand-dark);
+    }
+    .msg-warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-dark);
+    }
+
+    /* Code block */
+    .code-pre {
+      background: #090d16;
+      color: #e2e8f0;
+      border: 1px solid #1e293b;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      overflow-x: auto;
+      white-space: pre;
+      max-height: 240px;
+      overflow-y: auto;
+      line-height: 1.55;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: 0.2px;
+    }
+    .badge-ok {
+      background: var(--success-bg);
+      color: var(--success-dark);
+      border: 1px solid var(--success-border);
+    }
+    .badge-err {
+      background: var(--danger-bg);
+      color: var(--danger-dark);
+      border: 1px solid var(--danger-border);
+    }
+    .badge-brand {
+      background: var(--brand-subtle);
+      color: var(--brand);
+      border: 1px solid var(--brand-border);
+    }
+    .badge-warn {
+      background: var(--warn-bg);
+      color: var(--warn-dark);
+      border: 1px solid var(--warn-border);
+    }
+
+    /* Method labels */
+    .method-get    { color: #2563eb; font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; }
+    .method-post   { color: var(--success); font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; }
+    .method-patch  { color: var(--warn); font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; }
+    .method-delete { color: var(--danger); font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; }
+
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: currentColor;
+      animation: spin .6s linear infinite;
+    }
+    .spinner-dark {
+      border-color: rgba(0,0,0,.15);
+      border-top-color: var(--brand);
+    }
+
+    /* Page overlay */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.2);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .18s ease;
+    }
+    #overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(37,99,235,0.2);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Order summary kv grid */
+    .kv {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px 12px;
+      font-size: 13px;
+    }
+    .kv-lbl {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .kv-val {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Coupon voucher chip */
+    .coupon-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px dashed #93c5fd;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    /* Scrollable panel */
+    .scroll-panel {
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    /* Modern Toast Notifications */
+    #toasts {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .22s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 260px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .toast-ok {
+      background: #0f172a;
+      color: #fff;
+    }
+    .toast-err {
+      background: #be123c;
+      color: #fff;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(12px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Log entry */
+    .log-entry {
+      background: #fff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+      transition: border-color .15s;
+    }
+    .log-entry:hover {
+      border-color: var(--border-strong);
+    }
+    .log-summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .log-summary:hover {
+      background: #fafbfc;
+    }
+    .log-detail {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border-light);
+      background: #f8fafc;
+    }
+    details summary { list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      padding: 44px 20px;
+      color: var(--text-light);
+      font-size: 13.5px;
+    }
+    .empty-icon-wrap {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: var(--text-soft);
+    }
+
+    /* Split layout for Checkout */
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .checkout-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Voucher Promo Card */
+    .voucher-card {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .voucher-card::before {
+      content: '';
+      position: absolute;
+      right: -20px;
+      bottom: -20px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Coupon Studio Grid & Digital Ticket */
+    .coupon-studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 960px) {
+      .coupon-studio-grid { grid-template-columns: 1fr; }
+    }
+    .preset-chip {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .preset-chip:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .preset-chip.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .discount-type-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-subtle);
+    }
+    .discount-tab-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all .15s ease;
+      user-select: none;
+    }
+    .discount-tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255,255,255,0.6);
+    }
+    .discount-tab-btn.active {
+      background: #ffffff;
+      color: var(--brand);
+      box-shadow: var(--shadow-sm);
+      border-color: rgba(37,99,235,0.18);
+    }
+    .ticket-card {
+      background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 310px;
+    }
+    .ticket-card::before {
+      content: '';
+      position: absolute;
+      right: -30px;
+      top: -30px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .ticket-perforation {
+      display: flex;
+      align-items: center;
+      margin: 16px -22px;
+      position: relative;
+    }
+    .ticket-notch-left, .ticket-notch-right {
+      width: 14px;
+      height: 28px;
+      background: var(--bg-app);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .ticket-notch-left {
+      left: 0;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+    }
+    .ticket-notch-right {
+      right: 0;
+      border-top-left-radius: 14px;
+      border-bottom-left-radius: 14px;
+    }
+    .ticket-dash {
+      flex: 1;
+      border-top: 2px dashed rgba(255,255,255,0.2);
+      margin: 0 16px;
+    }
+    .voucher-code-display {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+    .barcode-strip {
+      height: 22px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.6) 0px,
+        rgba(255,255,255,0.6) 2px,
+        transparent 2px,
+        transparent 4px,
+        rgba(255,255,255,0.85) 4px,
+        rgba(255,255,255,0.85) 7px,
+        transparent 7px,
+        transparent 9px
+      );
+      opacity: 0.45;
+      border-radius: 2px;
+      margin-top: 14px;
+    }
+
+    /* Modal Backdrop & Container */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 150;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-dialog {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-subtle);
+      width: 100%;
+      overflow: hidden;
+      animation: modalPop .2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Utility */
+    .gap-1 { gap: 4px; } .gap-2 { gap: 8px; } .gap-3 { gap: 12px; }
+    .flex { display: flex; } .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-1 { flex: 1; } .flex-col { flex-direction: column; }
+    .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 14px; }
+    .mb-1 { margin-bottom: 4px; } .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 14px; }
+    .hidden { display: none !important; }
+    .w-full { width: 100%; }
+    .space-y > * + * { margin-top: 12px; }
+    .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 16px 0; }
+    .italic { font-style: italic; }
+  </style>
 </head>
 <body>
-  <h1>uniblox-ecom</h1>
-  <p>API is running. Visit <a href="/docs">/docs</a> for the full API reference.</p>
+
+<!-- Overlay loader -->
+<div id="overlay" class="hidden">
+  <div class="overlay-spinner"></div>
+</div>
+
+<!-- Top Navigation Bar -->
+<header class="topbar">
+  <div class="brand-cluster">
+    <div class="brand-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-title">
+        Uniblox Commerce
+        <span class="brand-env">v1.0 API</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="topbar-divider"></div>
+
+  <div class="topbar-subtitle">
+    <span class="status-pulse">
+      <span class="pulse-dot"></span>
+      Engine Active
+    </span>
+    <span style="color:#64748b">•</span>
+    <span>Transactional Checkout &amp; Loyalty Rewards</span>
+  </div>
+
+  <div class="topbar-links">
+    <a href="/docs" target="_blank" class="topbar-link">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+      Swagger API
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+    <a href="/redoc" target="_blank" class="topbar-link">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      ReDoc
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <!-- Customer switch panel -->
+    <div class="customer-box">
+      <div class="customer-box-lbl">
+        <span>Active Account</span>
+        <span style="font-size:9px;color:var(--text-soft)">IDEMPOTENT CONTEXT</span>
+      </div>
+
+      <!-- Hidden standard select kept 100% in sync for backward compatibility -->
+      <select id="customer-select" class="hidden" onchange="onSelectCustomer(this.value)">
+        <option value="">— Select Customer Account —</option>
+      </select>
+
+      <!-- Custom Interactive Account Switcher Button -->
+      <div style="position:relative">
+        <button type="button" id="customer-switcher-btn" class="customer-switcher-btn" onclick="toggleCustomerMenu()">
+          <div class="switcher-avatar" id="switcher-avatar-preview">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="switcher-info">
+            <div class="switcher-name" id="switcher-name-preview">Select Customer Account</div>
+            <div class="switcher-email" id="switcher-email-preview">Click to switch profile</div>
+          </div>
+          <span class="switcher-chevron">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+
+        <!-- Floating Dropdown Menu -->
+        <div id="customer-dropdown-menu" class="customer-menu hidden">
+          <div class="customer-menu-hdr">
+            <span>Customer Profiles</span>
+            <span id="customer-menu-count" class="badge" style="background:#e2e8f0;color:#475569">0</span>
+          </div>
+          <div id="customer-dropdown-list" class="customer-menu-list">
+            <!-- Populated via JS -->
+          </div>
+          <div class="customer-menu-footer">
+            <button type="button" class="customer-menu-add-btn" onclick="toggleCustomerMenu(false);showCreateCustomer()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Register New Customer…
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="customer-status"></div>
+    </div>
+
+    <!-- Shop nav -->
+    <div class="nav-section">
+      <div class="nav-section-lbl">Storefront Portal</div>
+      <button class="nav-item" data-page="products" onclick="gotoPage('products')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </span>
+        Product Catalog
+      </button>
+      <button class="nav-item" data-page="cart" onclick="gotoPage('cart')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        </span>
+        Shopping Cart
+        <span class="nav-badge" id="cart-badge">0</span>
+      </button>
+      <button class="nav-item" data-page="checkout" onclick="gotoPage('checkout')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </span>
+        Checkout Order
+      </button>
+      <button class="nav-item" data-page="orders" onclick="gotoPage('orders')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </span>
+        Order History
+      </button>
+    </div>
+
+    <hr class="nav-divider" />
+
+    <!-- Admin nav -->
+    <div class="nav-section nav-admin">
+      <div class="nav-section-lbl">Administration</div>
+      <button class="nav-item" data-page="coupons" onclick="gotoPage('coupons')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+        </span>
+        Coupon Engine
+      </button>
+      <button class="nav-item" data-page="report" onclick="gotoPage('report')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </span>
+        Sales Analytics
+      </button>
+      <button class="nav-item" data-page="apilog" onclick="gotoPage('apilog')">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        </span>
+        Developer Console
+        <span class="nav-badge" id="log-badge">0</span>
+      </button>
+    </div>
+
+    <div class="admin-warn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        Admin operations run in local assessment mode. Production relies on <code>X-Admin-Key</code> authorization.
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content Container -->
+  <main class="content" id="content">
+
+    <!-- ═══ PRODUCTS ═══ -->
+    <div id="page-products" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Product Catalog</div>
+          <div class="page-sub">
+            <span class="endpoint-badge">GET</span>
+            <code>/api/v1/products</code>
+            <span style="color:#cbd5e1">•</span>
+            <span>Real-time inventory lock &amp; catalog state</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="loadProducts()" id="btn-refresh-products">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Refresh Stock
+        </button>
+      </div>
+      <div id="products-grid" class="product-grid">
+        <p class="text-muted italic">Loading products…</p>
+      </div>
+    </div>
+
+    <!-- ═══ CART ═══ -->
+    <div id="page-cart" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Shopping Cart</div>
+          <div class="page-sub">
+            <span class="endpoint-badge">REST</span>
+            <code>/api/v1/carts</code>
+            <span style="color:#cbd5e1">•</span>
+            <span>Active line-item session</span>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-secondary btn-sm" onclick="loadCart()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Sync Cart
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="createCart()" id="btn-create-cart">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create New Cart
+          </button>
+        </div>
+      </div>
+      <div id="cart-result" class="mb-3"></div>
+      <div id="cart-panel">
+        <div class="empty">
+          <div class="empty-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          </div>
+          <div style="font-weight:600;color:var(--text-main);margin-bottom:4px">No active cart found</div>
+          <div>Select an active customer and click "Create New Cart" or add products directly.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CHECKOUT ═══ -->
+    <div id="page-checkout" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Complete Checkout</div>
+          <div class="page-sub">
+            <span class="endpoint-badge">POST</span>
+            <code>/api/v1/carts/{id}/checkout</code>
+            <span style="color:#cbd5e1">•</span>
+            <span>Atomic checkout with milestone discount redemption</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout-layout">
+        <!-- Left: Action & Coupon Form -->
+        <div class="card">
+          <div class="card-title">Billing &amp; Promotion</div>
+          <div class="card-sub">POST /api/v1/carts/{id}/checkout · Idempotent and concurrency-safe</div>
+
+          <div class="space-y mb-3">
+            <div class="field">
+              <label>Redeem Promo / Milestone Coupon Code</label>
+              <div style="display:flex;gap:8px">
+                <input id="inp-coupon" type="text" placeholder="e.g. MILE5-AB12CD" class="inp font-mono"
+                  style="text-transform:uppercase;letter-spacing:0.8px;font-weight:600" />
+              </div>
+              <span class="hint">Percentage or fixed-amount discounts automatically applied based on voucher rules.</span>
+            </div>
+
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:14px;display:flex;gap:12px;align-items:flex-start">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" style="flex-shrink:0;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.45">
+                <strong style="color:var(--text-main);display:block;margin-bottom:2px">Guaranteed Idempotent Submission</strong>
+                Retrying checkout on the same cart returns the previously created order without duplicate billing or stock decrement.
+              </div>
+            </div>
+
+            <button id="btn-checkout" onclick="doCheckout()" class="btn btn-primary w-full" style="padding:11px 16px;font-size:14px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Confirm &amp; Place Order
+            </button>
+          </div>
+          <div id="order-result"></div>
+        </div>
+
+        <!-- Right: Summary Card -->
+        <div class="card" style="position:sticky;top:20px">
+          <div class="card-title">Order Summary</div>
+          <div id="checkout-summary" class="mt-2">
+            <div class="empty" style="padding:20px 0">
+              <div class="empty-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div>No items in cart to review.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ORDERS ═══ -->
+    <div id="page-orders" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Order Management</div>
+          <div class="page-sub">
+            <span class="endpoint-badge">GET</span>
+            <code>/api/v1/orders</code>
+            <span style="color:#cbd5e1">•</span>
+            <span>Historical settled transactions</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="loadOrders()" id="btn-refresh-orders">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Refresh Orders
+        </button>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <div id="orders-table-wrap">
+          <div class="empty">
+            <div class="empty-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <div style="font-weight:600;color:var(--text-main)">No orders recorded</div>
+            <div>Place a new order via the Checkout portal.</div>
+          </div>
+        </div>
+        <!-- Pagination -->
+        <div id="orders-pagination" class="hidden" style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border-subtle);background:#fafbfc">
+          <span id="orders-page-info" class="text-sm text-light font-mono"></span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" id="btn-orders-prev" onclick="ordersChangePage(-1)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              Previous
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-orders-next" onclick="ordersChangePage(1)">
+              Next
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COUPONS (Admin) ═══ -->
+    <div id="page-coupons" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Coupon Engine &amp; Milestone Rewards</div>
+          <div class="page-sub">
+            <span class="endpoint-badge">ADMIN</span>
+            <code>POST / GET /api/v1/admin/coupons</code>
+            <span style="color:#cbd5e1">•</span>
+            <span>Automated reward pool allocation and lifecycle ledger</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="listCoupons()" id="btn-list-coupons">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Refresh Vouchers
+        </button>
+      </div>
+
+      <!-- Quick Metrics Strip -->
+      <div class="stats-row mb-3" style="grid-template-columns: repeat(3, 1fr)">
+        <div class="stat brand">
+          <div class="stat-val" id="stat-coupon-count">0</div>
+          <div class="stat-lbl">Coupons Issued</div>
+        </div>
+        <div class="stat green">
+          <div class="stat-val" id="stat-order-count">0</div>
+          <div class="stat-lbl">Placed Orders (Milestone Driver)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="stat-rule-preview" style="color:#0891b2">10% OFF</div>
+          <div class="stat-lbl" id="stat-rule-desc">Active Voucher Rule ($5.00 min)</div>
+        </div>
+      </div>
+
+      <!-- Milestone Progress & Auto-Generation Strip -->
+      <div class="card mb-3" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border-left:4px solid var(--brand);padding:14px 20px">
+        <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="flex items-center gap-2">
+              <span style="font-weight:800;color:var(--text-main);font-size:13.5px">Order Milestone Policy (<span id="lbl-milestone-summary">n = 5 orders, x = 10% discount</span>)</span>
+              <span class="badge badge-brand" id="badge-milestone-status">Milestones Tracked</span>
+            </div>
+            <div class="text-xs text-muted mt-1" id="lbl-milestone-sub">
+              Every 5th successfully placed order makes a 10% coupon available. A coupon is generated only when the milestone is reached.
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div style="text-align:right">
+              <div class="font-mono font-bold" style="font-size:14.5px;color:var(--text-main)" id="lbl-milestone-orders">0 Orders Placed</div>
+              <div class="text-xs text-light font-mono" id="lbl-milestone-next">Next Milestone: Order #5</div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-auto-gen" onclick="autoGenerateCoupons()" style="padding:7px 14px;white-space:nowrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              Auto-Issue Reached Milestones
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studio Grid: Form (Left) & Ticket Preview (Right) -->
+      <div class="coupon-studio-grid">
+        <!-- Left: Configuration Form -->
+        <div class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div class="card-title">Configure Milestone Voucher</div>
+            <div class="card-sub">POST /api/v1/admin/coupons/generate · Concurrency-safe voucher issuance</div>
+
+            <div class="space-y mb-3">
+              <!-- Field 1: Milestone N -->
+              <div class="field">
+                <div class="flex justify-between items-center">
+                  <label>Milestone Target (Order N)</label>
+                  <span class="text-xs text-light font-mono" id="milestone-label-hint">Every 5th order</span>
+                </div>
+                <input id="inp-milestone" type="number" min="1" value="5" class="inp tabular font-mono" placeholder="5" oninput="updateVoucherPreview()" />
+                <div id="milestone-reach-badge" class="mt-1" style="font-size:11.5px"></div>
+                <div class="flex gap-1 mt-1" style="flex-wrap:wrap">
+                  <button type="button" class="preset-chip" onclick="setMilestonePreset(3)">Every 3rd</button>
+                  <button type="button" class="preset-chip active" id="chip-m5" onclick="setMilestonePreset(5)">Every 5th</button>
+                  <button type="button" class="preset-chip" onclick="setMilestonePreset(10)">Every 10th</button>
+                  <button type="button" class="preset-chip" onclick="setMilestonePreset(25)">Every 25th</button>
+                </div>
+              </div>
+
+              <!-- Field 2: Max Uses -->
+              <div class="field">
+                <div class="flex justify-between items-center">
+                  <label>Redemption Limit (Max Uses)</label>
+                  <span class="text-xs text-light font-mono" id="uses-label-hint">1 single redemption</span>
+                </div>
+                <input id="inp-coupon-count" type="number" min="1" max="500" value="1" class="inp tabular font-mono" placeholder="1" oninput="updateVoucherPreview()" />
+                <div class="flex gap-1 mt-1" style="flex-wrap:wrap">
+                  <button type="button" class="preset-chip active" id="chip-u1" onclick="setUsesPreset(1)">Single Use (1x)</button>
+                  <button type="button" class="preset-chip" onclick="setUsesPreset(5)">5 Uses</button>
+                  <button type="button" class="preset-chip" onclick="setUsesPreset(10)">10 Uses</button>
+                  <button type="button" class="preset-chip" onclick="setUsesPreset(25)">25 Uses</button>
+                </div>
+              </div>
+
+              <!-- Field 3: Discount Type (Percentage vs Fixed Amount) -->
+              <div class="field">
+                <label>Discount Mode</label>
+                <div class="discount-type-tabs">
+                  <button type="button" id="btn-type-percent" class="discount-tab-btn active" onclick="setDiscountType('percent')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                    Percentage (%)
+                  </button>
+                  <button type="button" id="btn-type-fixed" class="discount-tab-btn" onclick="setDiscountType('fixed')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Fixed Amount ($)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Field 4: Discount Value -->
+              <div class="field">
+                <div class="flex justify-between items-center">
+                  <label id="discount-value-label">Discount Percentage (%)</label>
+                  <span class="text-xs text-light font-mono" id="discount-label-hint">10% discount</span>
+                </div>
+                <div style="position:relative">
+                  <input id="inp-discount-val" type="number" min="1" max="100" step="1" value="10" class="inp tabular font-mono" placeholder="10" oninput="updateVoucherPreview()" />
+                  <span id="discount-unit-symbol" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-light);font-weight:700;font-family:var(--font-mono)">%</span>
+                </div>
+                <!-- Percentage Presets -->
+                <div id="discount-percent-chips" class="flex gap-1 mt-1" style="flex-wrap:wrap">
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(5)">5%</button>
+                  <button type="button" class="preset-chip active" id="chip-d10" onclick="setDiscountPreset(10)">10%</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(15)">15%</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(20)">20%</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(25)">25%</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(50)">50%</button>
+                </div>
+                <!-- Fixed Amount Presets -->
+                <div id="discount-fixed-chips" class="flex gap-1 mt-1 hidden" style="flex-wrap:wrap">
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(3)">$3.00</button>
+                  <button type="button" class="preset-chip" id="chip-d5f" onclick="setDiscountPreset(5)">$5.00</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(10)">$10.00</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(15)">$15.00</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(25)">$25.00</button>
+                  <button type="button" class="preset-chip" onclick="setDiscountPreset(50)">$50.00</button>
+                </div>
+              </div>
+
+              <!-- Field 5: Minimum Cart Value -->
+              <div class="field">
+                <div class="flex justify-between items-center">
+                  <label>Minimum Cart Total ($)</label>
+                  <span class="text-xs text-light font-mono" id="min-order-hint">$5.00 minimum</span>
+                </div>
+                <div style="position:relative">
+                  <input id="inp-min-order" type="number" min="0" step="0.50" value="5.00" class="inp tabular font-mono" placeholder="5.00" oninput="updateVoucherPreview()" />
+                  <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-light);font-weight:700;font-family:var(--font-mono)">USD</span>
+                </div>
+                <div class="flex gap-1 mt-1" style="flex-wrap:wrap">
+                  <button type="button" class="preset-chip" onclick="setMinOrderPreset(0)">No Min ($0)</button>
+                  <button type="button" class="preset-chip active" id="chip-mo5" onclick="setMinOrderPreset(5)">$5.00 Min</button>
+                  <button type="button" class="preset-chip" onclick="setMinOrderPreset(10)">$10.00 Min</button>
+                  <button type="button" class="preset-chip" onclick="setMinOrderPreset(25)">$25.00 Min</button>
+                  <button type="button" class="preset-chip" onclick="setMinOrderPreset(50)">$50.00 Min</button>
+                </div>
+              </div>
+
+              <!-- Policy Badges -->
+              <div style="background:#f8fafc;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:12px;display:flex;gap:12px;font-size:12px;color:var(--text-muted)">
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="font-weight:600;color:var(--text-main);font-size:12.5px">Enforced Promotion Rules</div>
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="badge badge-ok" id="rule-badge-discount">10% Off</span>
+                    <span>•</span>
+                    <span>Min Cart: <strong id="rule-badge-mincart">$5.00</strong></span>
+                    <span>•</span>
+                    <span>Single-use concurrency lock</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button id="btn-gen-coupons" onclick="generateCoupons()" class="btn btn-warn w-full" style="padding:11px 16px;font-size:13.5px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+              Issue Milestone Voucher
+            </button>
+            <div id="coupon-gen-result" class="mt-2"></div>
+          </div>
+        </div>
+
+        <!-- Right: Digital Voucher Preview Card -->
+        <div class="ticket-card">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span style="font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#93c5fd">Uniblox Milestone Pass</span>
+              <span class="badge" id="voucher-preview-badge" style="background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)">Live Voucher</span>
+            </div>
+            <div id="voucher-preview-discount" style="font-size:24px;font-weight:800;letter-spacing:-0.5px;color:#fff;margin:6px 0 2px">
+              10% DISCOUNT
+            </div>
+            <div id="voucher-preview-desc" style="font-size:12px;color:#94a3b8">Applies to eligible order checkout</div>
+          </div>
+
+          <!-- Perforation cutouts -->
+          <div class="ticket-perforation">
+            <div class="ticket-notch-left"></div>
+            <div class="ticket-dash"></div>
+            <div class="ticket-notch-right"></div>
+          </div>
+
+          <div>
+            <div class="text-xs text-light" style="color:#94a3b8;margin-bottom:4px">Voucher Promo Code</div>
+            <div class="voucher-code-display">
+              <span id="voucher-preview-code" class="font-mono" style="font-size:18px;font-weight:800;letter-spacing:1px;color:#fff">MILE5-SAMPLE</span>
+              <button id="btn-copy-preview-code" onclick="copyVoucherCode()" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.25)" title="Copy Code">Copy</button>
+            </div>
+
+            <div style="margin-top:14px;font-size:11.5px;color:#cbd5e1;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div>Trigger: <strong id="preview-milestone" style="color:#fff">Every 5th Order</strong></div>
+              <div>Pool: <strong id="preview-uses" style="color:#fff">10 Redemptions</strong></div>
+              <div>Min Order: <strong id="preview-min-order" style="color:#fff">$5.00</strong></div>
+              <div>Currency: <strong style="color:#fff">USD</strong></div>
+            </div>
+
+            <div class="barcode-strip"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border-subtle);background:#fafbfc;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="card-title" style="margin-bottom:0">Active &amp; Historical Coupons Ledger</div>
+            <div class="text-xs text-light font-mono mt-1">GET /api/v1/admin/coupons</div>
+          </div>
+        </div>
+        <div id="coupons-list">
+          <div class="empty">
+            <div class="empty-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg>
+            </div>
+            <div>Click "Refresh Vouchers" to inspect active promotional codes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ REPORT (Admin) ═══ -->
+    <div id="page-report" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Executive Sales &amp; Rewards Analytics</div>
+          <div class="page-sub">
+            <span class="endpoint-badge">ADMIN</span>
+            <code>GET /api/v1/admin/report</code>
+            <span style="color:#cbd5e1">•</span>
+            <span>Aggregated commercial metrics &amp; discount liability</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-report" onclick="loadReport()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Recompute Report
+        </button>
+      </div>
+      <div id="report-result">
+        <div class="empty">
+          <div class="empty-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div>Click "Recompute Report" to load real-time revenue analytics.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ API LOG (Developer Console) ═══ -->
+    <div id="page-apilog" class="page hidden">
+      <div class="page-hdr mb-3">
+        <div>
+          <div class="page-title">Developer API Console</div>
+          <div class="page-sub">Real-time HTTP wire telemetry &amp; inspectable payload traces</div>
+        </div>
+        <button onclick="clearLog()" class="btn btn-secondary btn-sm">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Clear Telemetry
+        </button>
+      </div>
+      <div id="log-list" class="space-y">
+        <div class="empty">
+          <div class="empty-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <div style="font-weight:600;color:var(--text-main)">No API transactions captured yet</div>
+          <div>Perform any action in the dashboard to inspect wire payloads in real-time.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Create Customer -->
+<div id="create-customer-modal" class="hidden modal-backdrop">
+  <div class="modal-dialog" style="max-width:400px;padding:22px 24px">
+    <div class="flex justify-between items-center mb-3">
+      <div style="font-size:16px;font-weight:700;color:var(--text-main)">Register New Customer</div>
+      <button onclick="hideCreateCustomer()" style="background:none;border:none;cursor:pointer;color:var(--text-light);display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="space-y mb-3">
+      <div class="field">
+        <label>Full Legal Name</label>
+        <input id="inp-name" type="text" placeholder="e.g. Jane Doe" class="inp" />
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <input id="inp-email" type="email" placeholder="e.g. jane.doe@example.com" class="inp" />
+      </div>
+    </div>
+    <div id="create-customer-err" class="mb-2"></div>
+    <div class="flex gap-2">
+      <button onclick="hideCreateCustomer()" class="btn btn-secondary flex-1">Cancel</button>
+      <button id="btn-create-customer" onclick="createCustomer()" class="btn btn-primary flex-1">
+        Save Customer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Delete Coupon Confirmation -->
+<div id="delete-coupon-modal" class="hidden modal-backdrop" onclick="if(event.target===this)closeDeleteCouponModal()">
+  <div class="modal-dialog" style="max-width:420px;padding:24px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="width:40px;height:40px;border-radius:10px;background:var(--danger-bg);border:1px solid var(--danger-border);display:flex;align-items:center;justify-content:center;color:var(--danger);flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-main)">Delete Coupon Voucher</div>
+        <div style="font-size:12px;color:var(--text-light)">Permanently remove unredeemed code</div>
+      </div>
+    </div>
+    
+    <div style="background:#f8fafc;border:1px solid var(--border-subtle);border-radius:8px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-light);font-weight:700;margin-bottom:4px">Target Voucher Code</div>
+      <div id="del-modal-code" style="font-family:var(--font-mono);font-weight:800;font-size:16px;color:var(--text-main);letter-spacing:0.5px"></div>
+    </div>
+    
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:18px">
+      Are you sure you want to delete this coupon? This action cannot be undone. <em>(Coupons already redeemed on placed orders cannot be deleted.)</em>
+    </p>
+
+    <div id="del-modal-err" class="mb-2"></div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeDeleteCouponModal()" class="btn btn-secondary" style="flex:1">Cancel</button>
+      <button id="btn-confirm-delete-coupon" onclick="confirmDeleteCoupon()" class="btn" style="flex:1;background:var(--danger);color:#fff;border:1px solid var(--danger-dark);font-weight:700">
+        Delete Coupon
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal: Order Details / Receipt -->
+<div id="order-detail-modal" class="hidden modal-backdrop">
+  <div class="modal-dialog" style="max-width:580px;max-height:90vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border-subtle);background:#fafbfc">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Electronic Order Receipt
+        </div>
+        <div id="modal-order-id" style="font-size:11px;font-family:var(--font-mono);color:var(--text-light);margin-top:2px"></div>
+      </div>
+      <button onclick="closeOrderModal()" style="background:none;border:none;cursor:pointer;color:var(--text-light);display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="order-modal-body" style="padding:22px;overflow-y:auto;flex:1"></div>
+  </div>
+</div>
+
+<!-- Floating Toasts -->
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════════════════
+const S = {
+  customer: null,
+  cart: null,
+  products: [],
+  customers: [],
+  log: [],
+  version: 'v1',
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// DOM & Formatting helpers
+// ═══════════════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt = c => '$' + ((c || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pre = d => `<div class="code-pre">${esc(JSON.stringify(d, null, 2))}</div>`;
+const badge = s => `<span class="badge ${s>=200&&s<300?'badge-ok':'badge-err'}">${s||'ERR'}</span>`;
+const meth = m => `<span class="method-${m.toLowerCase()}">${m}</span>`;
+
+function copyText(text, label = 'Copied') {
+  navigator.clipboard.writeText(text).then(() => toast(`${label}: ${text.slice(0, 16)}…`));
+}
+
+function showOverlay() { $('overlay').classList.remove('hidden'); }
+function hideOverlay() { $('overlay').classList.add('hidden'); }
+
+async function withBtn(btnId, label, fn) {
+  const btn = $(btnId);
+  if (!btn) return fn();
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  const isDark = btn.classList.contains('btn-secondary');
+  const spinnerClass = isDark ? 'spinner spinner-dark' : 'spinner';
+  btn.innerHTML = `<span class="${spinnerClass}"></span> ${label}`;
+  try { return await fn(); }
+  finally { btn.innerHTML = orig; btn.disabled = false; }
+}
+
+function toast(text, type = 'ok') {
+  const div = document.createElement('div');
+  div.className = `toast toast-${type}`;
+  const icon = type === 'ok'
+    ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+    : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+  div.innerHTML = `${icon} <span>${esc(text)}</span>`;
+  $('toasts').appendChild(div);
+  setTimeout(() => {
+    div.style.transition = 'opacity .25s ease, transform .25s ease';
+    div.style.opacity = '0';
+    div.style.transform = 'translateY(8px)';
+    setTimeout(() => div.remove(), 250);
+  }, 3200);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SVG Hardware Illustrations tailored per product
+// ═══════════════════════════════════════════════════════════════════════
+function getProductSvg(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('headphone')) {
+    return `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+      <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+    </svg>`;
+  } else if (n.includes('keyboard')) {
+    return `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/>
+      <path d="M6 12h.01"/><path d="M10 12h.01"/><path d="M14 12h.01"/><path d="M18 12h.01"/>
+      <path d="M8 16h8"/>
+    </svg>`;
+  } else if (n.includes('hub') || n.includes('usb')) {
+    return `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="3"/><circle cx="12" cy="14" r="1"/><path d="M9 18h6"/><path d="M10 7h4"/>
+    </svg>`;
+  } else if (n.includes('webcam') || n.includes('camera')) {
+    return `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="10" r="8"/><circle cx="12" cy="10" r="3"/><path d="M7 22h10"/><path d="M12 18v4"/>
+    </svg>`;
+  } else if (n.includes('mouse')) {
+    return `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="7"/><line x1="12" y1="6" x2="12" y2="10"/>
+    </svg>`;
+  }
+  return `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+  </svg>`;
+}
+
+function getCategoryTag(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('headphone')) return 'Audio & Sound';
+  if (n.includes('keyboard')) return 'Mechanical Input';
+  if (n.includes('hub')) return 'Connectivity';
+  if (n.includes('webcam')) return 'Video & Optical';
+  if (n.includes('mouse')) return 'Limited Peripherals';
+  return 'Electronics';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// API Helper
+// ═══════════════════════════════════════════════════════════════════════
+async function api(method, path, body) {
+  const t0 = Date.now();
+  const opts = { method, headers: {} };
+  if (body !== undefined) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  let res, data;
+  try {
+    res  = await fetch(`/api/${S.version}${path}`, opts);
+    data = await res.json();
+  } catch (e) {
+    res  = { ok: false, status: 0 };
+    data = { detail: e.message };
+  }
+  S.log.unshift({ method, path, body, status: res.status, ok: res.ok, data, ms: Date.now() - t0 });
+  renderLog();
+  return { ok: res.ok, status: res.status, data };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Navigation
+// ═══════════════════════════════════════════════════════════════════════
+let currentPage = null;
+
+function gotoPage(name) {
+  if (currentPage === name) return;
+  showOverlay();
+  setTimeout(async () => {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    $(`page-${name}`).classList.remove('hidden');
+    document.querySelector(`[data-page="${name}"]`)?.classList.add('active');
+    currentPage = name;
+
+    if (name === 'products' && !S.products.length) await loadProducts();
+    if (name === 'cart') { if (S.cart) await loadCart(); else renderCartPanel(); }
+    if (name === 'checkout') {
+      $('order-result').innerHTML = '';
+      updateCheckoutSummary();
+    }
+    if (name === 'orders') await loadOrders(1);
+    if (name === 'report') loadReport();
+    if (name === 'coupons') {
+      loadMilestoneStatus();
+      updateVoucherPreview();
+      listCoupons();
+    }
+
+    hideOverlay();
+  }, 50);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Customers & Custom Account Switcher
+// ═══════════════════════════════════════════════════════════════════════
+function toggleCustomerMenu(force) {
+  const menu = $('customer-dropdown-menu');
+  const btn = $('customer-switcher-btn');
+  if (!menu || !btn) return;
+  const isCurrentlyOpen = !menu.classList.contains('hidden');
+  const shouldOpen = typeof force === 'boolean' ? force : !isCurrentlyOpen;
+  if (shouldOpen) {
+    menu.classList.remove('hidden');
+    btn.classList.add('open');
+  } else {
+    menu.classList.add('hidden');
+    btn.classList.remove('open');
+  }
+}
+
+document.addEventListener('click', e => {
+  const btn = $('customer-switcher-btn');
+  const menu = $('customer-dropdown-menu');
+  if (btn && menu && !menu.classList.contains('hidden')) {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      toggleCustomerMenu(false);
+    }
+  }
+});
+
+async function loadCustomers() {
+  const { ok, data } = await api('GET', '/customers');
+  if (!ok) return;
+  S.customers = data;
+  const sel = $('customer-select');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Select Customer Account —</option>' +
+    data.map(c => `<option value="${c.id}">${esc(c.name)} (${esc(c.email)})</option>`).join('');
+  if (prev) sel.value = prev;
+
+  renderCustomerDropdownList();
+  renderCustomerStatus();
+}
+
+function renderCustomerDropdownList() {
+  const listEl = $('customer-dropdown-list');
+  const countEl = $('customer-menu-count');
+  if (countEl) countEl.textContent = S.customers.length;
+  if (!listEl) return;
+
+  if (!S.customers.length) {
+    listEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-light);font-size:12px">No customer accounts registered.</div>';
+    return;
+  }
+
+  listEl.innerHTML = S.customers.map(c => {
+    const initials = c.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'CU';
+    const isActive = S.customer && S.customer.id === c.id;
+    return `<button type="button" class="customer-menu-item ${isActive ? 'active' : ''}" onclick="selectCustomerFromMenu('${c.id}')">
+      <div class="switcher-avatar" style="width:28px;height:28px;font-size:11px">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div class="switcher-name" style="font-size:12px">${esc(c.name)}</div>
+        <div class="switcher-email" style="font-size:10.5px">${esc(c.email)}</div>
+      </div>
+      <span class="customer-menu-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+    </button>`;
+  }).join('');
+}
+
+function selectCustomerFromMenu(id) {
+  const sel = $('customer-select');
+  if (sel) sel.value = id;
+  onSelectCustomer(id);
+  toggleCustomerMenu(false);
+}
+
+function onSelectCustomer(id) {
+  $('order-result').innerHTML = '';
+  if (!id) {
+    S.customer = null; S.cart = null;
+    renderCustomerStatus(); renderCartBadge();
+    return;
+  }
+  const c = S.customers.find(x => x.id === id);
+  if (!c) return;
+  S.customer = c;
+  S.cart = null;
+  renderCustomerStatus();
+  renderCartBadge();
+  toast(`Active profile: ${c.name}`);
+}
+
+function renderCustomerStatus() {
+  const el = $('customer-status');
+  const namePreview = $('switcher-name-preview');
+  const emailPreview = $('switcher-email-preview');
+  const avatarPreview = $('switcher-avatar-preview');
+
+  if (!S.customer) {
+    if (namePreview) namePreview.textContent = 'Select Customer Account';
+    if (emailPreview) emailPreview.textContent = 'Click to switch profile';
+    if (avatarPreview) avatarPreview.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    if (el) el.innerHTML = '';
+    renderCustomerDropdownList();
+    return;
+  }
+
+  const initials = S.customer.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'CU';
+  if (namePreview) namePreview.textContent = S.customer.name;
+  if (emailPreview) emailPreview.textContent = S.customer.email;
+  if (avatarPreview) avatarPreview.textContent = initials;
+
+  renderCustomerDropdownList();
+
+  const cartInfo = S.cart
+    ? `<div class="cart-mini">
+        <span class="flex items-center gap-1">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          ${(S.cart.items||[]).length} line items
+        </span>
+        <span class="font-bold tabular text-brand">${fmt(S.cart.total_cents||0)}</span>
+      </div>`
+    : '';
+  if (el) el.innerHTML = cartInfo;
+}
+
+function renderCartBadge() {
+  $('cart-badge').textContent = S.cart ? (S.cart.items||[]).length : 0;
+}
+
+function showCreateCustomer() {
+  $('create-customer-modal').classList.remove('hidden');
+  $('inp-name').focus();
+}
+function hideCreateCustomer() {
+  $('create-customer-modal').classList.add('hidden');
+  $('create-customer-err').innerHTML = '';
+}
+
+async function createCustomer() {
+  const name  = $('inp-name').value.trim();
+  const email = $('inp-email').value.trim();
+  const errEl = $('create-customer-err');
+  if (!name || !email) {
+    errEl.innerHTML = '<div class="msg msg-err">Both legal name and email are required.</div>'; return;
+  }
+  await withBtn('btn-create-customer', 'Registering…', async () => {
+    const { ok, status, data } = await api('POST', '/customers', { name, email });
+    if (ok) {
+      S.customer = data;
+      await loadCustomers();
+      $('customer-select').value = data.id;
+      renderCustomerStatus(); renderCartBadge();
+      hideCreateCustomer();
+      toast(`Customer account created: ${name}`);
+    } else {
+      errEl.innerHTML = `<div class="msg msg-err">${badge(status)} ${esc(data.detail)}</div>`;
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Products
+// ═══════════════════════════════════════════════════════════════════════
+async function loadProducts() {
+  await withBtn('btn-refresh-products', 'Refreshing…', async () => {
+    const { ok, data } = await api('GET', '/products');
+    if (!ok) { $('products-grid').innerHTML = `<p class="text-danger">${esc(data.detail)}</p>`; return; }
+    S.products = data;
+    renderProducts();
+  });
+}
+
+function renderProducts() {
+  const grid = $('products-grid');
+  if (!S.products.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>No products found in catalog.</div>'; return;
+  }
+  grid.innerHTML = S.products.map(p => {
+    const out = p.stock_qty === 0;
+    const low = p.stock_qty > 0 && p.stock_qty <= 3;
+    const category = getCategoryTag(p.name);
+    const svgIcon = getProductSvg(p.name);
+    return `<div class="product-card ${out ? 'out-of-stock' : ''}">
+      <div class="product-thumb">
+        <span class="product-category-tag">${category}</span>
+        ${svgIcon}
+      </div>
+      <div>
+        <div class="product-name">${esc(p.name)}</div>
+        <div class="product-price tabular mt-1">${fmt(p.price_cents)}</div>
+      </div>
+      <div>
+        <span class="stock-pill ${out ? 'stock-out' : low ? 'stock-low' : 'stock-ok'}">
+          <span class="stock-dot"></span>
+          ${out ? 'Sold Out' : low ? `Low Stock · ${p.stock_qty} left` : `${p.stock_qty} in stock`}
+        </span>
+      </div>
+      <div class="qty-row">
+        <input type="number" min="1" max="${p.stock_qty || 1}" value="1" id="qty-${p.id}"
+          class="inp qty-inp" ${out ? 'disabled' : ''} />
+        <button id="add-${p.id}" class="btn btn-primary btn-sm flex-1" ${out ? 'disabled' : ''}
+          onclick="addToCart('${p.id}','${esc(p.name)}','add-${p.id}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ${out ? 'Unavailable' : 'Add to Cart'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function addToCart(productId, productName, btnId) {
+  if (!S.customer) { toast('Please select an active customer profile first', 'err'); return; }
+  if (!S.cart) {
+    const { ok, data } = await api('POST', '/carts', { customer_id: S.customer.id });
+    if (!ok) { toast(data.detail || 'Could not create cart', 'err'); return; }
+    S.cart = data;
+    renderCustomerStatus(); renderCartBadge();
+  }
+  if (S.cart.checked_out) { toast('Current cart is already checked out — click "New Cart"', 'err'); return; }
+  const qty = parseInt($(`qty-${productId}`)?.value) || 1;
+  await withBtn(btnId, 'Adding…', async () => {
+    const { ok, data } = await api('POST', `/carts/${S.cart.id}/items`, { product_id: productId, qty });
+    if (ok) {
+      S.cart = data; renderCustomerStatus(); renderCartBadge();
+      toast(`Added ${qty}× ${productName} to cart`);
+      renderProducts();
+    } else {
+      toast(data.detail || 'Failed to update cart', 'err');
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Cart
+// ═══════════════════════════════════════════════════════════════════════
+async function createCart() {
+  if (!S.customer) { toast('Please select an active customer profile first', 'err'); return; }
+  $('order-result').innerHTML = '';
+  await withBtn('btn-create-cart', 'Creating…', async () => {
+    const { ok, status, data } = await api('POST', '/carts', { customer_id: S.customer.id });
+    if (ok) {
+      S.cart = data; renderCustomerStatus(); renderCartBadge();
+      renderCartPanel(); updateCheckoutSummary();
+      toast('Active cart session started');
+    } else {
+      $('cart-result').innerHTML = `<div class="msg msg-err">${badge(status)} ${esc(data.detail)}</div>`;
+    }
+  });
+}
+
+async function loadCart() {
+  if (!S.cart) return;
+  const { ok, data } = await api('GET', `/carts/${S.cart.id}`);
+  if (ok) {
+    S.cart = data; renderCustomerStatus(); renderCartBadge();
+    renderCartPanel(); updateCheckoutSummary();
+  }
+}
+
+function renderCartPanel() {
+  const el = $('cart-panel');
+  if (!S.cart) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>
+      <div style="font-weight:600;color:var(--text-main);margin-bottom:4px">No active cart session</div>
+      <div>Click "+ Create New Cart" above to start shopping.</div>
+    </div>`;
+    return;
+  }
+  if (!S.cart.items || !S.cart.items.length) {
+    el.innerHTML = `<div class="card">
+      <div class="empty" style="padding:28px 0">
+        <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>
+        <div style="font-weight:600;color:var(--text-main);margin-bottom:4px">Your cart is currently empty</div>
+        <div>Browse the Product Catalog to add line items.</div>
+      </div>
+    </div>`;
+    return;
+  }
+  const rows = S.cart.items.map(item => `
+    <tr>
+      <td>
+        <div style="font-weight:600;color:var(--text-main)">${esc(item.product_name)}</div>
+        <div class="font-mono text-xs text-light">${esc(item.product_id.slice(0, 8))}…</div>
+      </td>
+      <td style="width:100px;text-align:center">
+        <input type="number" min="1" value="${item.qty}"
+          onchange="updateQty('${item.product_id}',this.value,this)"
+          class="inp tabular" style="width:64px;padding:6px 4px;text-align:center" />
+      </td>
+      <td style="text-align:right;color:var(--text-light)" class="tabular">${fmt(item.price_cents)}</td>
+      <td style="text-align:right;font-weight:700;color:var(--text-main)" class="tabular">${fmt(item.subtotal_cents)}</td>
+      <td style="text-align:right;padding-left:8px">
+        <button onclick="removeItem('${item.product_id}',this)" class="btn btn-danger" title="Remove line item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </td>
+    </tr>`).join('');
+  el.innerHTML = `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;background:#fafbfc">
+        <div>
+          <div class="card-title" style="margin-bottom:0">Active Session · ${esc(S.customer?.name||'Customer')}</div>
+          <div class="text-xs font-mono text-light mt-1">Cart ID: ${S.cart.id}</div>
+        </div>
+        ${S.cart.checked_out ? '<span class="badge badge-warn">Settled / Checked Out</span>' : '<span class="badge badge-ok">Active Session</span>'}
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead><tr>
+            <th>Product Specification</th><th style="text-align:center">Quantity</th>
+            <th style="text-align:right">Unit Price</th><th style="text-align:right">Subtotal</th>
+            <th></th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr>
+            <td colspan="3" style="text-align:right;color:var(--text-light);padding-top:14px;font-size:13px;font-weight:600">Subtotal</td>
+            <td style="text-align:right;font-size:18px;font-weight:800;color:var(--text-main);padding-top:14px" class="tabular font-mono">${fmt(S.cart.total_cents)}</td>
+            <td></td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div style="padding:16px 20px;border-top:1px solid var(--border-subtle);background:#fafbfc;display:flex;justify-content:flex-end">
+        <button class="btn btn-primary" onclick="$('order-result').innerHTML='';gotoPage('checkout')">
+          Proceed to Checkout
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>`;
+}
+
+async function updateQty(productId, qty, inputEl) {
+  qty = parseInt(qty);
+  if (!qty || qty < 1) { await loadCart(); return; }
+  inputEl.disabled = true;
+  const { ok, data } = await api('PATCH', `/carts/${S.cart.id}/items/${productId}`, { qty });
+  inputEl.disabled = false;
+  if (ok) {
+    S.cart = data; renderCustomerStatus(); renderCartBadge();
+    renderCartPanel(); updateCheckoutSummary();
+  } else { toast(data.detail || 'Failed to modify quantity', 'err'); await loadCart(); }
+}
+
+async function removeItem(productId, btn) {
+  btn.disabled = true;
+  const { ok, data } = await api('DELETE', `/carts/${S.cart.id}/items/${productId}`);
+  if (ok) {
+    S.cart = data; renderCustomerStatus(); renderCartBadge();
+    renderCartPanel(); updateCheckoutSummary();
+  } else { toast(data.detail || 'Failed to remove line item', 'err'); btn.disabled = false; }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Checkout
+// ═══════════════════════════════════════════════════════════════════════
+function updateCheckoutSummary() {
+  const el = $('checkout-summary');
+  if (!S.cart || !S.cart.items || !S.cart.items.length) {
+    el.innerHTML = `<div class="empty" style="padding:24px 0">
+      <div class="empty-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+      <div>No active items in cart.</div>
+    </div>`;
+    return;
+  }
+  const rows = S.cart.items.map(i => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid var(--border-light)">
+        <div style="font-weight:600;color:var(--text-main);font-size:12.5px">${esc(i.product_name)}</div>
+        <div class="text-xs text-light tabular">Qty: ${i.qty} · ${fmt(i.price_cents)} each</div>
+      </td>
+      <td style="text-align:right;font-weight:700;padding:8px 0;border-bottom:1px solid var(--border-light)" class="tabular font-mono">
+        ${fmt(i.subtotal_cents)}
+      </td>
+    </tr>`).join('');
+  el.innerHTML = `
+    <table style="margin-bottom:16px;width:100%">
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="background:#f8fafc;border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border-subtle)">
+      <div class="flex justify-between items-center mb-1">
+        <span style="color:var(--text-light);font-size:12px">Gross Subtotal</span>
+        <span class="tabular font-mono" style="font-weight:600">${fmt(S.cart.total_cents)}</span>
+      </div>
+      <div class="flex justify-between items-center mb-1">
+        <span style="color:var(--text-light);font-size:12px">Estimated Taxes &amp; Fees</span>
+        <span class="tabular font-mono text-xs text-muted">$0.00</span>
+      </div>
+      <div class="divider" style="margin:8px 0"></div>
+      <div class="flex justify-between items-baseline">
+        <span style="font-weight:700;color:var(--text-main)">Total Payable</span>
+        <span class="tabular font-mono" style="font-size:20px;font-weight:800;color:var(--brand)">${fmt(S.cart.total_cents)}</span>
+      </div>
+    </div>
+    ${S.cart.checked_out ? '<div class="msg msg-warn mt-2" style="font-size:11.5px">⚠️ This cart was previously settled. Resubmitting will safely retrieve the existing order receipt without double charges.</div>' : ''}`;
+}
+
+async function doCheckout() {
+  if (!S.cart) { toast('No active cart to checkout', 'err'); return; }
+  const coupon = $('inp-coupon').value.trim().toUpperCase() || null;
+  await withBtn('btn-checkout', 'Processing Checkout…', async () => {
+    const { ok, status, data } = await api('POST', `/carts/${S.cart.id}/checkout`, { coupon_code: coupon });
+    const el = $('order-result');
+    if (ok) {
+      S.cart = null;
+      renderCustomerStatus();
+      renderCartBadge();
+      renderCartPanel();
+      $('inp-coupon').value = '';
+      toast('Order settled and confirmed!');
+      el.innerHTML = `
+        <div class="msg msg-ok" style="margin-top:16px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--success-dark);margin-bottom:12px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Order Placed Successfully!
+          </div>
+          <div class="kv">
+            <span class="kv-lbl">Order Identifier</span>
+            <span class="kv-val font-mono" style="font-size:11.5px;display:flex;align-items:center;gap:6px">
+              ${data.id}
+              <button onclick="copyText('${data.id}','Copied ID')" class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:10px" title="Copy UUID">Copy</button>
+            </span>
+            <span class="kv-lbl">Gross Amount</span><span class="kv-val tabular font-mono">${fmt(data.gross_cents)}</span>
+            <span class="kv-lbl">Savings / Discount</span>
+            <span class="kv-val tabular font-mono ${data.discount_cents > 0 ? 'text-success' : ''}">
+              ${data.discount_cents > 0 ? '-' : ''}${fmt(data.discount_cents)}
+            </span>
+            <span class="kv-lbl" style="font-weight:700">Net Settled</span>
+            <span class="kv-val tabular font-mono text-brand" style="font-size:17px;font-weight:800">${fmt(data.net_cents)}</span>
+            ${data.coupon_code ? `<span class="kv-lbl">Redeemed Coupon</span><span class="kv-val"><span class="coupon-chip">${esc(data.coupon_code)}</span></span>` : ''}
+          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid #a7f3d0;display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="$('order-result').innerHTML='';gotoPage('products')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Start New Order
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="openOrderModal('${data.id}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              View Full Receipt
+            </button>
+          </div>
+        </div>`;
+      updateCheckoutSummary();
+    } else {
+      el.innerHTML = `<div class="msg msg-err" style="margin-top:14px">${badge(status)} ${esc(data.detail)}</div>`;
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Orders list + Modal
+// ═══════════════════════════════════════════════════════════════════════
+const ORDERS_PAGE_SIZE = 10;
+let ordersCurrentPage = 1;
+
+async function loadOrders(page = 1) {
+  ordersCurrentPage = page;
+  const wrap = $('orders-table-wrap');
+  wrap.innerHTML = `<div class="empty"><span class="spinner spinner-dark" style="display:inline-block"></span> Loading historical orders…</div>`;
+
+  const { ok, status, data } = await api('GET', `/orders?page=${page}&page_size=${ORDERS_PAGE_SIZE}`);
+  if (!ok) {
+    wrap.innerHTML = `<div class="msg msg-err" style="margin:16px">${badge(status)} ${esc(data.detail)}</div>`; return;
+  }
+
+  if (!data.orders.length) {
+    wrap.innerHTML = `<div class="empty">
+      <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+      <div style="font-weight:600;color:var(--text-main)">No orders recorded in ledger</div>
+    </div>`;
+    $('orders-pagination').classList.add('hidden'); return;
+  }
+
+  const rows = data.orders.map(o => {
+    const d = new Date(o.created_at);
+    const dateFormatted = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const itemCount = o.items.reduce((s, i) => s + i.qty, 0);
+    return `<tr>
+      <td class="font-mono">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-weight:700;color:var(--text-main)">${o.id.slice(0, 8)}…</span>
+          <button onclick="copyText('${o.id}','Copied Order ID')" class="btn btn-secondary btn-sm" style="padding:1px 5px;font-size:10px" title="Copy UUID">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+      </td>
+      <td style="color:var(--text-muted);font-size:12.5px">${dateFormatted}</td>
+      <td style="text-align:center">
+        <span class="badge" style="background:#f1f5f9;color:#334155">${itemCount} unit${itemCount !== 1 ? 's' : ''}</span>
+      </td>
+      <td style="text-align:right" class="tabular font-mono text-muted">${fmt(o.gross_cents)}</td>
+      <td style="text-align:right;font-weight:600" class="tabular font-mono ${o.discount_cents > 0 ? 'text-success' : 'text-light'}">
+        ${o.discount_cents > 0 ? '-' + fmt(o.discount_cents) : '—'}
+      </td>
+      <td style="text-align:right;font-weight:800;color:var(--text-main)" class="tabular font-mono">${fmt(o.net_cents)}</td>
+      <td style="text-align:center">
+        ${o.coupon_code ? `<span class="badge badge-brand">${esc(o.coupon_code)}</span>` : '<span style="color:#cbd5e1">—</span>'}
+      </td>
+      <td style="text-align:center">
+        <button class="btn btn-secondary btn-sm" onclick="openOrderModal('${o.id}')" title="View Order Details">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          View
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<div class="table-responsive">
+    <table>
+      <thead><tr>
+        <th>Order Ref</th><th>Timestamp</th><th style="text-align:center">Volume</th>
+        <th style="text-align:right">Gross</th><th style="text-align:right">Discount</th>
+        <th style="text-align:right">Settled Net</th><th style="text-align:center">Coupon</th><th style="text-align:center">Action</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+
+  // Pagination
+  const pg = $('orders-pagination');
+  pg.classList.remove('hidden');
+  pg.style.display = 'flex';
+  $('orders-page-info').textContent = `Page ${data.page} of ${data.total_pages} (${data.total} total orders)`;
+  $('btn-orders-prev').disabled = data.page <= 1;
+  $('btn-orders-next').disabled = data.page >= data.total_pages;
+}
+
+function ordersChangePage(delta) {
+  loadOrders(ordersCurrentPage + delta);
+}
+
+async function openOrderModal(orderId) {
+  $('modal-order-id').textContent = `UUID: ${orderId}`;
+  $('order-modal-body').innerHTML = `<div class="empty"><span class="spinner spinner-dark" style="display:inline-block"></span> Retrieving order data…</div>`;
+  $('order-detail-modal').classList.remove('hidden');
+
+  const { ok, status, data } = await api('GET', `/orders/${orderId}`);
+  if (!ok) {
+    $('order-modal-body').innerHTML = `<div class="msg msg-err">${badge(status)} ${esc(data.detail)}</div>`; return;
+  }
+
+  const itemRows = data.items.map(i => `<tr>
+    <td>
+      <div style="font-weight:600;color:var(--text-main)">${esc(i.product_name)}</div>
+    </td>
+    <td style="text-align:center" class="tabular font-mono">×${i.qty}</td>
+    <td style="text-align:right" class="tabular font-mono text-muted">${fmt(i.price_cents)}</td>
+    <td style="text-align:right;font-weight:700" class="tabular font-mono">${fmt(i.subtotal_cents)}</td>
+  </tr>`).join('');
+
+  $('order-modal-body').innerHTML = `
+    <div style="background:#f8fafc;border-radius:var(--radius-sm);padding:16px;border:1px solid var(--border-subtle);margin-bottom:18px">
+      <div class="kv">
+        <span class="kv-lbl">Order Status</span>
+        <span class="kv-val"><span class="badge badge-ok">✓ SETTLED &amp; CONFIRMED</span></span>
+        <span class="kv-lbl">Created Timestamp</span>
+        <span class="kv-val">${new Date(data.created_at).toLocaleString()}</span>
+        <span class="kv-lbl">Gross Subtotal</span><span class="kv-val tabular font-mono">${fmt(data.gross_cents)}</span>
+        <span class="kv-lbl">Discount Applied</span>
+        <span class="kv-val tabular font-mono ${data.discount_cents > 0 ? 'text-success' : ''}">
+          ${data.discount_cents > 0 ? '-' + fmt(data.discount_cents) : '—'}
+        </span>
+        <span class="kv-lbl" style="font-weight:700">Net Amount Paid</span>
+        <span class="kv-val tabular font-mono text-brand" style="font-size:17px;font-weight:800">${fmt(data.net_cents)}</span>
+        ${data.coupon_code ? `<span class="kv-lbl">Coupon Voucher</span><span class="kv-val"><span class="coupon-chip">${esc(data.coupon_code)}</span></span>` : ''}
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-light);margin-bottom:8px">
+      Snapshotted Line Items at Execution
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr>
+          <th>Product</th><th style="text-align:center">Qty</th>
+          <th style="text-align:right">Price</th><th style="text-align:right">Subtotal</th>
+        </tr></thead>
+        <tbody>${itemRows}</tbody>
+        <tfoot><tr>
+          <td colspan="3" style="text-align:right;padding-top:12px;color:var(--text-light);font-size:13px;font-weight:600">Net Settled</td>
+          <td style="text-align:right;padding-top:12px;font-weight:800;font-size:16px;color:var(--text-main)" class="tabular font-mono">${fmt(data.net_cents)}</td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:18px;gap:8px">
+      <button onclick="window.print()" class="btn btn-secondary btn-sm">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print Receipt
+      </button>
+      <button onclick="closeOrderModal()" class="btn btn-primary btn-sm">Close</button>
+    </div>`;
+}
+
+function closeOrderModal() {
+  $('order-detail-modal').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Admin — Coupons
+// ═══════════════════════════════════════════════════════════════════════
+let couponDiscountMode = 'percent'; // 'percent' | 'fixed'
+
+function setDiscountType(type) {
+  couponDiscountMode = type;
+  const isFixed = type === 'fixed';
+
+  $('btn-type-percent')?.classList.toggle('active', !isFixed);
+  $('btn-type-fixed')?.classList.toggle('active', isFixed);
+
+  $('discount-percent-chips')?.classList.toggle('hidden', isFixed);
+  $('discount-fixed-chips')?.classList.toggle('hidden', !isFixed);
+
+  const labelEl = $('discount-value-label');
+  const unitEl = $('discount-unit-symbol');
+  const valInp = $('inp-discount-val');
+
+  if (isFixed) {
+    if (labelEl) labelEl.textContent = 'Fixed Discount Amount ($)';
+    if (unitEl) unitEl.textContent = 'USD';
+    if (valInp) {
+      valInp.min = '0.50';
+      valInp.max = '1000';
+      valInp.step = '0.50';
+      valInp.value = valInp.dataset.fixedVal || '5.00';
+    }
+  } else {
+    if (labelEl) labelEl.textContent = 'Discount Percentage (%)';
+    if (unitEl) unitEl.textContent = '%';
+    if (valInp) {
+      valInp.min = '1';
+      valInp.max = '100';
+      valInp.step = '1';
+      valInp.value = valInp.dataset.percentVal || '10';
+    }
+  }
+
+  updateVoucherPreview();
+}
+
+function setDiscountPreset(val) {
+  const inp = $('inp-discount-val');
+  if (inp) {
+    if (couponDiscountMode === 'fixed') {
+      inp.value = Number(val).toFixed(2);
+      inp.dataset.fixedVal = inp.value;
+    } else {
+      inp.value = val;
+      inp.dataset.percentVal = val;
+    }
+    updateVoucherPreview();
+  }
+}
+
+function highlightDiscountChips() {
+  const isFixed = couponDiscountMode === 'fixed';
+  const curVal = parseFloat($('inp-discount-val')?.value) || 0;
+  const chipContainer = isFixed ? $('discount-fixed-chips') : $('discount-percent-chips');
+  if (!chipContainer) return;
+  chipContainer.querySelectorAll('.preset-chip').forEach(c => {
+    const chipNum = parseFloat(c.textContent.replace(/[^0-9.]/g, ''));
+    c.classList.toggle('active', Math.abs(chipNum - curVal) < 0.001);
+  });
+}
+
+function setMinOrderPreset(val) {
+  const inp = $('inp-min-order');
+  if (inp) {
+    inp.value = Number(val).toFixed(2);
+    updateVoucherPreview();
+  }
+  document.querySelectorAll('#page-coupons .preset-chip').forEach(c => {
+    if (c.textContent.includes('Min')) {
+      const chipVal = parseFloat(c.textContent.replace(/[^0-9.]/g, '')) || 0;
+      c.classList.toggle('active', chipVal === Number(val));
+    }
+  });
+}
+
+let currentMilestoneStatus = null;
+
+async function loadMilestoneStatus() {
+  const { ok, data } = await api('GET', '/admin/coupons/milestones');
+  if (ok && data) {
+    currentMilestoneStatus = data;
+    if ($('lbl-milestone-orders')) $('lbl-milestone-orders').textContent = `${data.total_orders} Orders Placed`;
+    if ($('stat-order-count')) $('stat-order-count').textContent = data.total_orders;
+    if ($('lbl-milestone-summary')) {
+      $('lbl-milestone-summary').textContent = `n = ${data.milestone_interval_n} orders, x = ${data.default_discount_pct_x}% discount`;
+    }
+    if ($('lbl-milestone-next')) {
+      $('lbl-milestone-next').textContent = data.orders_until_next > 0
+        ? `Next Milestone: Order #${data.next_milestone} (${data.orders_until_next} orders needed)`
+        : `Milestone #${data.next_milestone} Reached!`;
+    }
+    const badgeEl = $('badge-milestone-status');
+    if (badgeEl) {
+      if (data.eligible_unissued_milestones.length > 0) {
+        badgeEl.textContent = `Milestone #${data.eligible_unissued_milestones[0]} Ready to Issue`;
+        badgeEl.className = 'badge badge-ok';
+      } else if (data.reached_milestones.length > 0) {
+        badgeEl.textContent = `All Reached Milestones Issued`;
+        badgeEl.className = 'badge badge-brand';
+      } else {
+        badgeEl.textContent = `Awaiting Milestone (${data.orders_until_next} orders needed)`;
+        badgeEl.className = 'badge badge-warn';
+      }
+    }
+    updateVoucherPreview();
+  }
+}
+
+async function autoGenerateCoupons() {
+  await withBtn('btn-auto-gen', 'Issuing…', async () => {
+    const isFixed = couponDiscountMode === 'fixed';
+    const rawDisc = parseFloat($('inp-discount-val')?.value);
+    const rawMin = parseFloat($('inp-min-order')?.value);
+    const min_order_cents = isNaN(rawMin) || rawMin < 0 ? 0 : Math.round(rawMin * 100);
+
+    const payload = {
+      milestone_n: null,
+      max_uses: 1,
+      discount_type: isFixed ? 'fixed' : 'percent',
+      min_order_cents
+    };
+    if (isFixed) {
+      payload.discount_amount_cents = Math.round((rawDisc || 5) * 100);
+      payload.discount_pct = 0;
+    } else {
+      payload.discount_pct = Math.round(rawDisc || 10);
+      payload.discount_amount_cents = null;
+    }
+
+    const { ok, status, data } = await api('POST', '/admin/coupons/generate', payload);
+    const el = $('coupon-gen-result');
+    if (!ok) {
+      el.innerHTML = `<div class="msg msg-err mt-2">${badge(status)} ${esc(data.detail)}</div>`;
+      toast(data.detail || 'Generation failed', 'err');
+      return;
+    }
+    if (data.generated === 0) {
+      el.innerHTML = `<div class="msg msg-warn mt-2" style="padding:10px 14px;font-size:12.5px">${esc(data.message)}</div>`;
+      toast(data.message, 'warn');
+    } else {
+      const c = data.coupons[0];
+      const codeEl = $('voucher-preview-code');
+      if (codeEl) { codeEl.textContent = c.code; codeEl.dataset.generated = 'true'; }
+      el.innerHTML = `<div class="msg msg-ok mt-2" style="padding:10px 14px;font-size:12.5px">${esc(data.message)}</div>`;
+      toast(`Generated ${data.generated} milestone coupon(s)!`);
+    }
+    await listCoupons();
+    await loadMilestoneStatus();
+  });
+}
+
+function updateVoucherPreview() {
+  const m = parseInt($('inp-milestone')?.value) || 5;
+  const u = parseInt($('inp-coupon-count')?.value) || 1;
+  const isFixed = couponDiscountMode === 'fixed';
+  const discVal = parseFloat($('inp-discount-val')?.value) || (isFixed ? 5 : 10);
+  const minOrderVal = parseFloat($('inp-min-order')?.value) || 0;
+
+  const valInp = $('inp-discount-val');
+  if (valInp) {
+    if (isFixed) valInp.dataset.fixedVal = discVal.toFixed(2);
+    else valInp.dataset.percentVal = discVal;
+  }
+
+  // Milestone reach indicator
+  const reachEl = $('milestone-reach-badge');
+  if (reachEl && currentMilestoneStatus) {
+    const total = currentMilestoneStatus.total_orders;
+    const isGenerated = currentMilestoneStatus.generated_milestones.includes(m);
+    if (m <= total) {
+      if (isGenerated) {
+        reachEl.innerHTML = `<span style="color:#059669;font-weight:600">✓ Milestone #${m} reached (${total} orders placed) · Coupon already issued</span>`;
+      } else {
+        reachEl.innerHTML = `<span style="color:#059669;font-weight:700">✓ Milestone #${m} REACHED &amp; ready to generate!</span>`;
+      }
+    } else {
+      reachEl.innerHTML = `<span style="color:#d97706;font-weight:600">⏳ Milestone #${m} not reached yet (${total}/${m} orders placed · ${m - total} needed)</span>`;
+    }
+  }
+
+  if ($('milestone-label-hint')) $('milestone-label-hint').textContent = `Every ${m}${m===1?'st':m===2?'nd':m===3?'rd':'th'} order`;
+  if ($('uses-label-hint')) $('uses-label-hint').textContent = `${u} ${u===1?'single redemption':'redemptions'}`;
+  if ($('preview-milestone')) $('preview-milestone').textContent = `Every ${m}th Order`;
+  if ($('preview-uses')) $('preview-uses').textContent = `${u} ${u===1?'Single Use':'Redemptions'}`;
+
+  const discStr = isFixed ? `$${discVal.toFixed(2)} OFF` : `${discVal}% OFF`;
+  const discHeadline = isFixed ? `$${discVal.toFixed(2)} OFF` : `${discVal}% DISCOUNT`;
+  if ($('discount-label-hint')) $('discount-label-hint').textContent = discStr.toLowerCase();
+
+  const minOrderStr = minOrderVal > 0 ? `$${minOrderVal.toFixed(2)}` : '$0.00';
+  if ($('min-order-hint')) $('min-order-hint').textContent = minOrderVal > 0 ? `$${minOrderVal.toFixed(2)} minimum cart` : 'No minimum cart';
+  if ($('preview-min-order')) $('preview-min-order').textContent = minOrderVal > 0 ? `$${minOrderVal.toFixed(2)}` : 'None ($0)';
+
+  if ($('voucher-preview-discount')) $('voucher-preview-discount').textContent = discHeadline;
+  if ($('voucher-preview-desc')) {
+    $('voucher-preview-desc').textContent = minOrderVal > 0
+      ? `Applies to eligible cart orders of $${minOrderVal.toFixed(2)} or more`
+      : `Applies to any qualifying milestone checkout`;
+  }
+
+  const codeEl = $('voucher-preview-code');
+  if (codeEl && !codeEl.dataset.generated) {
+    codeEl.textContent = `MILE${m}-SAMPLE`;
+  }
+
+  if ($('rule-badge-discount')) $('rule-badge-discount').textContent = discStr;
+  if ($('rule-badge-mincart')) $('rule-badge-mincart').textContent = minOrderVal > 0 ? `$${minOrderVal.toFixed(2)}` : 'None ($0)';
+
+  if ($('stat-rule-preview')) $('stat-rule-preview').textContent = discStr;
+  if ($('stat-rule-desc')) $('stat-rule-desc').textContent = `Active Voucher Rule (${minOrderVal > 0 ? '$' + minOrderVal.toFixed(2) + ' min' : 'No min'})`;
+
+  highlightDiscountChips();
+}
+
+function setMilestonePreset(val) {
+  const inp = $('inp-milestone');
+  if (inp) { inp.value = val; updateVoucherPreview(); }
+  document.querySelectorAll('#page-coupons .preset-chip').forEach(c => {
+    if (c.textContent.includes('Every')) {
+      c.classList.toggle('active', c.textContent.trim() === `Every ${val}${val===3?'rd':val===5?'th':val===10?'th':'th'}`);
+    }
+  });
+}
+
+function setUsesPreset(val) {
+  const inp = $('inp-coupon-count');
+  if (inp) { inp.value = val; updateVoucherPreview(); }
+  document.querySelectorAll('#page-coupons .preset-chip').forEach(c => {
+    if (c.textContent.includes('Use')) {
+      const isMatch = (val === 1 && c.textContent.includes('Single')) || c.textContent.startsWith(`${val} `);
+      c.classList.toggle('active', isMatch);
+    }
+  });
+}
+
+function copyVoucherCode() {
+  const code = $('voucher-preview-code')?.textContent;
+  if (code) copyText(code, 'Copied Voucher Code');
+}
+
+async function generateCoupons() {
+  const milestone_n = parseInt($('inp-milestone').value) || 5;
+  const max_uses    = parseInt($('inp-coupon-count').value) || 1;
+  if (milestone_n < 1 || max_uses < 1) { toast('Milestone and uses must be ≥ 1', 'err'); return; }
+
+  const isFixed = couponDiscountMode === 'fixed';
+  const rawDisc = parseFloat($('inp-discount-val')?.value);
+  if (isNaN(rawDisc) || rawDisc <= 0) {
+    toast('Please enter a valid discount amount > 0', 'err');
+    return;
+  }
+  if (!isFixed && rawDisc > 100) {
+    toast('Discount percentage cannot exceed 100%', 'err');
+    return;
+  }
+
+  const rawMin = parseFloat($('inp-min-order')?.value);
+  const min_order_cents = isNaN(rawMin) || rawMin < 0 ? 0 : Math.round(rawMin * 100);
+
+  const payload = {
+    milestone_n,
+    max_uses,
+    discount_type: isFixed ? 'fixed' : 'percent',
+    min_order_cents
+  };
+
+  if (isFixed) {
+    payload.discount_amount_cents = Math.round(rawDisc * 100);
+    payload.discount_pct = 0;
+  } else {
+    payload.discount_pct = Math.round(rawDisc);
+    payload.discount_amount_cents = null;
+  }
+
+  await withBtn('btn-gen-coupons', 'Issuing Voucher…', async () => {
+    const { ok, status, data } = await api('POST', '/admin/coupons/generate', payload);
+    const el = $('coupon-gen-result');
+    if (!ok) {
+      el.innerHTML = `<div class="msg msg-err mt-2">${badge(status)} ${esc(data.detail)}</div>`;
+      toast(data.detail || 'Issuance rejected', 'err');
+      return;
+    }
+    const c = data.coupons[0];
+
+    // Update live voucher preview card
+    const codeEl = $('voucher-preview-code');
+    if (codeEl) {
+      codeEl.textContent = c.code;
+      codeEl.dataset.generated = 'true';
+    }
+    const badgeEl = $('voucher-preview-badge');
+    if (badgeEl) {
+      badgeEl.textContent = 'Active Voucher';
+      badgeEl.style.background = 'rgba(34,197,94,0.2)';
+      badgeEl.style.color = '#4ade80';
+    }
+
+    const discLabel = (c.discount_type === 'fixed' && c.discount_amount_cents != null)
+      ? `$${(c.discount_amount_cents / 100).toFixed(2)} Fixed OFF`
+      : `${c.discount_pct}% OFF`;
+
+    const minCartLabel = c.min_order_cents > 0
+      ? `min cart ${fmt(c.min_order_cents)}`
+      : `no min cart`;
+
+    el.innerHTML = `
+      <div class="msg msg-ok mt-2" style="padding:10px 14px;font-size:12.5px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span>✓ Voucher <strong>${esc(c.code)}</strong> issued (${discLabel}, ${minCartLabel}, ${c.uses_remaining} use)</span>
+          <button onclick="copyText('${c.code}','Copied Code')" class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:10.5px">Copy Code</button>
+        </div>
+      </div>`;
+    toast(`Milestone voucher issued: ${c.code}`);
+    await listCoupons();
+    await loadMilestoneStatus();
+  });
+}
+
+async function listCoupons() {
+  const { ok, data } = await api('GET', '/admin/coupons');
+  const el = $('coupons-list');
+  if (!ok) { el.innerHTML = `<div class="msg msg-err" style="margin:16px">${esc(data.detail)}</div>`; return; }
+
+  // Update metrics strip
+  const countEl = $('stat-coupon-count');
+  const poolEl = $('stat-coupon-pool');
+  if (countEl) countEl.textContent = data.length;
+  if (poolEl) {
+    const pool = data.reduce((acc, c) => acc + (c.uses_remaining || 0), 0);
+    poolEl.textContent = pool;
+  }
+
+  if (!data.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div>
+      <div>No milestone coupons created yet. Generate one in the studio above.</div>
+    </div>`; return;
+  }
+  el.innerHTML = `<div class="scroll-panel"><table style="width:100%">
+    <thead><tr>
+      <th>Code Reference</th><th>Discount Rule</th><th>Minimum Order</th><th>Milestone</th><th style="text-align:center">Uses Left</th><th style="text-align:center">State</th><th style="text-align:right">Action</th>
+    </tr></thead>
+    <tbody>${data.map(c => {
+      const isFixed = c.discount_type === 'fixed' && c.discount_amount_cents != null;
+      const discountBadge = isFixed
+        ? `<span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:700">$${(c.discount_amount_cents/100).toFixed(2)} Fixed OFF</span>`
+        : `<span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-weight:700">${c.discount_pct}% OFF</span>`;
+      const minCartBadge = c.min_order_cents > 0
+        ? `<span class="tabular font-mono text-muted font-semibold">${fmt(c.min_order_cents)}</span>`
+        : `<span class="text-light text-xs font-mono">No Min ($0)</span>`;
+
+      const isUsed = Boolean(c.is_used || (c.max_uses && c.uses_remaining < c.max_uses));
+      const actionCell = isUsed
+        ? `<span class="badge" style="background:#f8fafc;color:#94a3b8;border:1px solid #e2e8f0;font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:3px;padding:3px 8px" title="Locked: coupon has redemptions on settled orders and cannot be deleted">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Locked (Used)
+          </span>`
+        : `<button onclick="openDeleteCouponModal('${esc(c.code)}')" class="btn btn-secondary btn-sm" style="color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg);padding:3px 9px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:4px" title="Delete unredeemed coupon ${esc(c.code)}">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete
+          </button>`;
+
+      return `<tr>
+      <td class="tbl-mono">
+        <span style="letter-spacing:0.5px;font-weight:700">${esc(c.code)}</span>
+        <button onclick="copyText('${c.code}','Copied Code')" class="btn btn-secondary btn-sm" style="padding:1px 5px;font-size:10px;margin-left:6px" title="Copy Code">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </td>
+      <td>${discountBadge}</td>
+      <td>${minCartBadge}</td>
+      <td style="text-align:center"><span class="badge badge-brand">#${c.milestone_n}</span></td>
+      <td style="text-align:center;font-weight:700" class="tabular font-mono ${c.uses_remaining > 0 ? 'text-success' : 'text-danger'}">${c.uses_remaining}</td>
+      <td style="text-align:center">${c.uses_remaining > 0
+        ? '<span class="badge badge-ok">Active Pool</span>'
+        : '<span class="badge badge-err">Exhausted</span>'}</td>
+      <td style="text-align:right">${actionCell}</td>
+    </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+let couponCodeToDelete = null;
+
+function openDeleteCouponModal(code) {
+  couponCodeToDelete = code;
+  const modal = $('delete-coupon-modal');
+  const codeEl = $('del-modal-code');
+  const errEl = $('del-modal-err');
+  if (codeEl) codeEl.textContent = code;
+  if (errEl) errEl.innerHTML = '';
+  const btn = $('btn-confirm-delete-coupon');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Delete Coupon';
+  }
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeDeleteCouponModal() {
+  couponCodeToDelete = null;
+  const modal = $('delete-coupon-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function confirmDeleteCoupon() {
+  if (!couponCodeToDelete) return;
+  const code = couponCodeToDelete;
+  const btn = $('btn-confirm-delete-coupon');
+  const errEl = $('del-modal-err');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+  }
+  if (errEl) errEl.innerHTML = '';
+
+  try {
+    const { ok, status, data } = await api('DELETE', `/admin/coupons/${encodeURIComponent(code)}`);
+    if (!ok) {
+      if (errEl) errEl.innerHTML = `<div class="msg msg-err" style="margin-top:8px">${badge(status)} ${esc(data?.detail || 'Deletion failed')}</div>`;
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Retry Delete';
+      }
+      return;
+    }
+    closeDeleteCouponModal();
+    toast(`Coupon ${code} permanently deleted`, 'ok');
+    await listCoupons();
+    if (typeof loadMilestoneStatus === 'function') {
+      await loadMilestoneStatus();
+    }
+  } catch (err) {
+    if (errEl) errEl.innerHTML = `<div class="msg msg-err" style="margin-top:8px">${esc(err.message)}</div>`;
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Retry Delete';
+    }
+  }
+}
+
+function deleteCoupon(code) {
+  openDeleteCouponModal(code);
+}
+
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// Admin — Report
+// ═══════════════════════════════════════════════════════════════════════
+async function loadReport() {
+  await withBtn('btn-report', 'Computing…', async () => {
+    const { ok, status, data } = await api('GET', '/admin/report');
+    const el = $('report-result');
+    if (!ok) { el.innerHTML = `<div class="msg msg-err">${badge(status)} ${esc(data.detail)}</div>`; return; }
+
+    const productRows = data.products_sold.length
+      ? data.products_sold.map(p => `<tr>
+          <td style="font-weight:600;color:var(--text-main)">${esc(p.product_name)}</td>
+          <td style="text-align:center;font-weight:700" class="tabular font-mono">${p.qty_sold}</td>
+          <td style="text-align:right;font-weight:800;color:var(--brand)" class="tabular font-mono">${fmt(p.revenue_cents)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center;color:var(--text-light);padding:24px">No commercial transactions recorded yet.</td></tr>';
+
+    const codes = data.discount_codes_used.length
+      ? data.discount_codes_used.map(c => `<span class="coupon-chip" style="font-size:11.5px">${esc(c)}</span>`).join(' ')
+      : '<span class="text-light italic">No discount vouchers redeemed yet</span>';
+
+    el.innerHTML = `
+      <div class="stats-row mb-3">
+        <div class="stat brand">
+          <div class="stat-val">${data.total_orders}</div>
+          <div class="stat-lbl">Settled Orders</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">${data.total_items_purchased}</div>
+          <div class="stat-lbl">Units Sold</div>
+        </div>
+        <div class="stat green">
+          <div class="stat-val">${fmt(data.net_revenue_cents)}</div>
+          <div class="stat-lbl">Net Revenue</div>
+        </div>
+        <div class="stat red">
+          <div class="stat-val">-${fmt(data.total_discount_cents)}</div>
+          <div class="stat-lbl">Discounts Absorbed</div>
+        </div>
+      </div>
+
+      <div class="stats-row mb-3" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat">
+          <div class="stat-val text-muted">${fmt(data.gross_revenue_cents)}</div>
+          <div class="stat-lbl">Gross Revenue</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" style="color:#0891b2">${data.coupons_generated}</div>
+          <div class="stat-lbl">Coupons Generated</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" style="color:var(--purple)">${data.coupons_redeemed}</div>
+          <div class="stat-lbl">Coupons Redeemed</div>
+        </div>
+      </div>
+
+      <div class="card mb-3" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border-subtle);background:#fafbfc">
+          <div class="card-title" style="margin-bottom:0">Product Sales Volume Breakdown</div>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>Product Name</th><th style="text-align:center">Units Sold</th><th style="text-align:right">Gross Revenue</th></tr></thead>
+            <tbody>${productRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title mb-2">Redeemed Discount Vouchers</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">${codes}</div>
+      </div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Developer Console (API Log)
+// ═══════════════════════════════════════════════════════════════════════
+function renderLog() {
+  $('log-badge').textContent = S.log.length;
+  const el = $('log-list');
+  if (!S.log.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+      <div style="font-weight:600;color:var(--text-main)">No API transactions logged</div>
+    </div>`; return;
+  }
+  el.innerHTML = S.log.map(e => {
+    const methClass = `method-${e.method.toLowerCase()}`;
+    return `<details class="log-entry">
+      <summary class="log-summary">
+        <span class="${methClass}" style="width:52px;flex-shrink:0;font-size:12px">${e.method}</span>
+        <span class="badge ${e.status>=200&&e.status<300?'badge-ok':'badge-err'}">${e.status||'ERR'}</span>
+        <span class="font-mono flex-1" style="font-size:11.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.path}</span>
+        <span style="font-size:11.5px;color:var(--text-light);flex-shrink:0;font-family:var(--font-mono)">${e.ms}ms</span>
+      </summary>
+      <div class="log-detail space-y">
+        ${e.body !== undefined ? `<div><div class="text-xs text-light mb-1 font-semibold">Request Body</div>${pre(e.body)}</div>` : ''}
+        <div><div class="text-xs text-light mb-1 font-semibold">Wire Response (${e.status})</div>${pre(e.data)}</div>
+      </div>
+    </details>`;
+  }).join('');
+}
+
+function clearLog() { S.log = []; renderLog(); }
+
+// ═══════════════════════════════════════════════════════════════════════
+// Initialization
+// ═══════════════════════════════════════════════════════════════════════
+(async () => {
+  await loadCustomers();
+  gotoPage('products');
+})();
+</script>
 </body>
 </html>
