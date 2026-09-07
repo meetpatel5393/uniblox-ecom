@@ -42,9 +42,14 @@ def add_item(
     product = product_repo.get_by_public_id(db, product_public_id)
     if not product:
         raise NotFoundError("Product not found")
-    if product.stock_qty < qty:
+
+    existing_item = cart_repo.get_item(db, cart_id=cart.id, product_id=product.id)
+    already_in_cart = existing_item.qty if existing_item else 0
+    if product.stock_qty < already_in_cart + qty:
+        available = max(0, product.stock_qty - already_in_cart)
         raise UnprocessableError(
-            f"Only {product.stock_qty} units of '{product.name}' available"
+            f"Only {available} more unit(s) of '{product.name}' available "
+            f"({already_in_cart} already in cart, {product.stock_qty} in stock)"
         )
 
     cart_repo.upsert_item(db, cart_id=cart.id, product_id=product.id, qty=qty)

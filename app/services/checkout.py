@@ -27,6 +27,7 @@ def checkout(
         existing = order_repo.get_by_cart_id(db, cart.id)
         if existing:
             return to_response(existing)
+        raise ConflictError("Cart is already checked out but no order was found")
 
     # 3. Guard: empty cart
     if not cart.items:
@@ -68,7 +69,7 @@ def checkout(
         if used >= coupon.max_uses:
             raise ConflictError(f"Coupon '{coupon_code}' has been fully redeemed")
         
-        if getattr(coupon, "discount_type", "percent") == "fixed" and coupon.discount_amount_cents:
+        if (coupon.discount_type or "percent") == "fixed" and coupon.discount_amount_cents:
             discount_cents = min(gross_cents, coupon.discount_amount_cents)
         else:
             discount_cents = (gross_cents * coupon.discount_pct) // 100
@@ -117,4 +118,7 @@ def checkout(
     db.commit()
 
     # Reload with relationships for the response (commit expires ORM attributes)
-    return to_response(order_repo.get_by_cart_id(db, cart.id))
+    reloaded = order_repo.get_by_cart_id(db, cart.id)
+    if not reloaded:
+        raise ConflictError("Order was created but could not be retrieved")
+    return to_response(reloaded)
